@@ -1,0 +1,13 @@
+OASIS_ID,group,kind,file,plate,well,concentration_uM
+OASIS1501,hit_in_all_assays,treated,OASIS1501_treated.png,plate_41002692,G05,100.0
+OASIS1501,hit_in_all_assays,dmso,OASIS1501_dmso.png,plate_41002692,L04,0.0
+OASIS656,hit_in_all_assays,treated,OASIS656_treated.png,plate_41002946,E02,100.0
+OASIS656,hit_in_all_assays,dmso,OASIS656_dmso.png,plate_41002946,H10,0.0
+OASIS1394,cell_painting_only,treated,OASIS1394_treated.png,plate_41002896,M03,100.0
+OASIS1394,cell_painting_only,dmso,OASIS1394_dmso.png,plate_41002896,K04,0.0
+OASIS1087,cell_painting_only,treated,OASIS1087_treated.png,plate_41002693,F09,100.0
+OASIS1087,cell_painting_only,dmso,OASIS1087_dmso.png,plate_41002693,H08,0.0
+OASIS1157,inactive,treated,OASIS1157_treated.png,plate_41002692,B02,100.0
+OASIS1157,inactive,dmso,OASIS1157_dmso.png,plate_41002692,L04,0.0
+OASIS1003,inactive,treated,OASIS1003_treated.png,plate_41002693,G09,100.0
+OASIS1003,inactive,dmso,OASIS1003_dmso.png,plate_41002693,H08,0.0
