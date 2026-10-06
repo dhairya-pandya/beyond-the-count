@@ -81,7 +81,7 @@ takes ~15 min (CP-CNN) to ~30 min (CellProfiler) on a 10-core laptop; 200 permut
 
 ## Headline results (CellProfiler, `allpod`; details in `report/technical_report.pdf`)
 
-404 endpoints → 181 powered (55 % indeterminate) → 62 'wins' under a plain bootstrap → **9 certified** after null calibration (all 9 also certified with CP-CNN and DINOv2; cytotoxicity-burst endpoints enriched, q = 0.007; MT advantage in 2 of 3 representations, LDH never; cell-free 0 of 8). Permuted-label control: raw false-positive rate 13 % at nominal 5 %, calibrated 4.9 % on held-out runs.
+404 endpoints → 181 powered (55 % indeterminate) → 62 'wins' under a plain bootstrap → **9 certified** after null calibration (all 9 also certified with CP-CNN and DINOv2; cytotoxicity enrichment is confounded with endpoint size and reported as descriptive; MT advantage in 2 of 3 representations, LDH never; cell-free 0 of 8). Permuted-label control: raw false-positive rate 13 % at nominal 5 %, calibrated 4.9 % on held-out runs.
 
 ## Reading the labels correctly
 
