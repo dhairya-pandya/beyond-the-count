@@ -196,6 +196,9 @@ with tab_enr:
     enr = load_enrichment()
     st.write("One-sided Fisher exact tests: is an assay / target family over-represented among 'morphology advantage' endpoints "
              "(vs. powered endpoints with no advantage)? q-values are BH-adjusted within each grouping.")
+    st.caption("Caution: cytotoxicity endpoints have about four times more actives than cell-based endpoints (median 97.5 vs 25), so they are easier to certify. "
+               "Restricted to endpoints with at least 50 actives the cytotoxicity enrichment disappears for CellProfiler and CP-CNN (odds ratio ≈ 1) and is undecided for DINOv2; "
+               "read these tables as descriptive, not as evidence of a mechanism.")
     if enr is None:
         st.info("Run `python scripts/04_run_enrichment.py` to generate results/enrichment.csv.")
     else:
