@@ -1,0 +1,18 @@
+# versions used for the reported results (Python 3.12)
+numpy==2.5.3
+pandas==3.0.6
+pyarrow==25.0.1
+scipy==1.18.1
+scikit-learn==1.9.1
+xgboost==3.4.1
+statsmodels==0.15.0
+matplotlib==3.11.2
+joblib==1.6.0
+requests==2.34.2
+streamlit==1.64.0
+plotly==7.1.0
+pytest==9.1.1
+markdown==3.11
+tifffile==2026.9.20
+pillow==12.3.0
+imagecodecs==2026.8.16
