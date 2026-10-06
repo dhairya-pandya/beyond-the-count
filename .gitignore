@@ -1,0 +1,16 @@
+.venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+.pytest_cache/
+.superpowers/
+data/raw/
+data/external/
+data/processed/
+results/cache/
+*.egg-info/
+.DS_Store
+results/logs/
+report/_*.html
+.arena/
+results_prev_oct3/
