@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "cpsa"
+version = "0.1.0"
+description = "Cell Painting Shortcut Audit: is morphology better than a cell-count baseline, after multiple-testing correction?"
+requires-python = ">=3.10"
+dependencies = [
+    "numpy", "pandas", "pyarrow", "scipy", "scikit-learn", "xgboost",
+    "statsmodels", "matplotlib", "joblib", "requests",
+]
+
+[project.optional-dependencies]
+demo = ["streamlit>=1.50", "plotly"]
+extras = ["markdown", "tifffile", "pillow", "imagecodecs"]  # report PDF (16) and demo images (14)
+dev = ["pytest", "jupyter", "shap"]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
