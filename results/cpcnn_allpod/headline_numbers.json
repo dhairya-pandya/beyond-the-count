@@ -1,0 +1,307 @@
+{
+  "config": "cpcnn_allpod",
+  "n_endpoints_tested": 404,
+  "n_by_category": {
+    "cellbased": 292,
+    "cellfree": 72,
+    "cytotox": 38,
+    "native": 2
+  },
+  "n_powered": 181,
+  "n_indeterminate": 223,
+  "frac_indeterminate": 0.552,
+  "powered_by_category": {
+    "cellbased": 147,
+    "cytotox": 24,
+    "cellfree": 8,
+    "native": 2
+  },
+  "verdict_by_category": {
+    "cellbased": {
+      "indeterminate": 145,
+      "morphology_advantage": 10,
+      "no_advantage": 137
+    },
+    "cellfree": {
+      "indeterminate": 64,
+      "morphology_advantage": 0,
+      "no_advantage": 8
+    },
+    "cytotox": {
+      "indeterminate": 14,
+      "morphology_advantage": 4,
+      "no_advantage": 20
+    },
+    "native": {
+      "indeterminate": 0,
+      "morphology_advantage": 1,
+      "no_advantage": 1
+    }
+  },
+  "funnel": {
+    "tested": 404,
+    "naive_delta_gt0_all": 289,
+    "naive_delta_gt0_powered": 160,
+    "powered_raw_p_lt_0.05_uncorrected": 90,
+    "bh_q_lt_0.05_raw_bootstrap_p": 60,
+    "bh_q_lt_0.05_null_calibrated_p": 15
+  },
+  "advantage_vs_strong_raw": 60,
+  "advantage_vs_scalar_raw": 84,
+  "frac_powered_delta_gt0": 0.884,
+  "n_powered_delta_gt0": 160,
+  "null_sd": {
+    "strong": 1.54,
+    "scalar": 1.447
+  },
+  "advantage_vs_scalar_baseline": 29,
+  "advantage_vs_scalar_but_not_vs_strong": 18,
+  "advantage_vs_strong_but_not_vs_scalar": 4,
+  "median_AUROC_powered": {
+    "scalar_cc": 0.534,
+    "strong_cc": 0.547,
+    "full": 0.654
+  },
+  "median_delta_powered": 0.1,
+  "median_delta_advantage": 0.219,
+  "AUROC_sd_powered_full": 0.118,
+  "AUROC_sd_indeterminate_full": 0.179,
+  "indeterminate_full_AUROC_below_0.4_or_above_0.8": 56,
+  "indeterminate_full_AUROC_below_0.4": 37,
+  "calibration_powered": {
+    "median_brier_skill": -0.074,
+    "median_ece": 0.089,
+    "median_calib_slope": 0.317,
+    "frac_slope_lt_0.8": 1.0,
+    "frac_brier_skill_gt0": 0.282,
+    "median_brier_raw_vs_recal": [
+      0.1146,
+      0.1037
+    ]
+  },
+  "native": {
+    "MT": {
+      "scalar_cc_AUROC": 0.8389,
+      "strong_cc_AUROC": 0.8666,
+      "full_AUROC": 0.9139,
+      "delta_AUROC": 0.0473,
+      "delta_z": 4.299,
+      "calibrated_p": 0.0026,
+      "fdr_q": 0.0386,
+      "fdr_q_scalar": 0.0012,
+      "verdict": "morphology_advantage",
+      "verdict_scalar": "morphology_advantage",
+      "verdict_uncalibrated": "morphology_advantage"
+    },
+    "LDH": {
+      "scalar_cc_AUROC": 0.9506,
+      "strong_cc_AUROC": 0.9574,
+      "full_AUROC": 0.9683,
+      "delta_AUROC": 0.0109,
+      "delta_z": 1.6286,
+      "calibrated_p": 0.1451,
+      "fdr_q": 0.2919,
+      "fdr_q_scalar": 0.1337,
+      "verdict": "no_advantage",
+      "verdict_scalar": "no_advantage",
+      "verdict_uncalibrated": "no_advantage"
+    },
+    "cell_count": {
+      "scalar_cc_AUROC": 0.9829,
+      "strong_cc_AUROC": 1.0,
+      "full_AUROC": 0.9907,
+      "delta_AUROC": -0.0093,
+      "delta_z": -4.2659,
+      "calibrated_p": 0.9972,
+      "fdr_q": NaN,
+      "fdr_q_scalar": NaN,
+      "verdict": "positive_control",
+      "verdict_scalar": "positive_control",
+      "verdict_uncalibrated": "positive_control"
+    }
+  },
+  "top_advantage": [
+    {
+      "endpoint_id": "TOX21_AR_LUC_MDAKB2_Agonist_3uM_Nilutamide",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 19,
+      "strong_cc_AUROC": 0.38,
+      "full_AUROC": 0.861,
+      "delta_AUROC": 0.481,
+      "fdr_q": 0.01
+    },
+    {
+      "endpoint_id": "TOX21_GR_BLA_Agonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 17,
+      "strong_cc_AUROC": 0.36,
+      "full_AUROC": 0.724,
+      "delta_AUROC": 0.364,
+      "fdr_q": 0.043
+    },
+    {
+      "endpoint_id": "BSK_CASM3C_Proliferation",
+      "category": "cellbased",
+      "assay_target_family": "cell cycle",
+      "n_active": 34,
+      "strong_cc_AUROC": 0.356,
+      "full_AUROC": 0.683,
+      "delta_AUROC": 0.327,
+      "fdr_q": 0.007
+    },
+    {
+      "endpoint_id": "BSK_SAg_Eselectin",
+      "category": "cellbased",
+      "assay_target_family": "cell adhesion molecules",
+      "n_active": 30,
+      "strong_cc_AUROC": 0.506,
+      "full_AUROC": 0.811,
+      "delta_AUROC": 0.305,
+      "fdr_q": 0.007
+    },
+    {
+      "endpoint_id": "LTEA_HepaRG_ABCB1",
+      "category": "cellbased",
+      "assay_target_family": "transporter",
+      "n_active": 31,
+      "strong_cc_AUROC": 0.464,
+      "full_AUROC": 0.737,
+      "delta_AUROC": 0.273,
+      "fdr_q": 0.048
+    },
+    {
+      "endpoint_id": "TOX21_GR_BLA_Antagonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 53,
+      "strong_cc_AUROC": 0.563,
+      "full_AUROC": 0.825,
+      "delta_AUROC": 0.262,
+      "fdr_q": 0.021
+    },
+    {
+      "endpoint_id": "TOX21_AR_LUC_MDAKB2_Agonist",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 31,
+      "strong_cc_AUROC": 0.584,
+      "full_AUROC": 0.841,
+      "delta_AUROC": 0.256,
+      "fdr_q": 0.033
+    },
+    {
+      "endpoint_id": "TOX21_PR_BLA_Antagonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 145,
+      "strong_cc_AUROC": 0.522,
+      "full_AUROC": 0.741,
+      "delta_AUROC": 0.219,
+      "fdr_q": 0.001
+    },
+    {
+      "endpoint_id": "TOX21_AR_BLA_Antagonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 72,
+      "strong_cc_AUROC": 0.595,
+      "full_AUROC": 0.782,
+      "delta_AUROC": 0.186,
+      "fdr_q": 0.039
+    },
+    {
+      "endpoint_id": "TOX21_AR_LUC_MDAKB2_Antagonist_0.5nM_R1881",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 90,
+      "strong_cc_AUROC": 0.609,
+      "full_AUROC": 0.768,
+      "delta_AUROC": 0.159,
+      "fdr_q": 0.038
+    }
+  ],
+  "cellfree_powered_endpoints": [
+    {
+      "endpoint_id": "NVS_ADME_hCYP3A4",
+      "n_active": 19,
+      "strong_cc_AUROC": 0.28,
+      "full_AUROC": 0.318,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_GPCR_hOpiate_mu",
+      "n_active": 22,
+      "strong_cc_AUROC": 0.511,
+      "full_AUROC": 0.567,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_MP_hPBR",
+      "n_active": 33,
+      "strong_cc_AUROC": 0.56,
+      "full_AUROC": 0.574,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hER",
+      "n_active": 20,
+      "strong_cc_AUROC": 0.518,
+      "full_AUROC": 0.675,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hGR",
+      "n_active": 32,
+      "strong_cc_AUROC": 0.632,
+      "full_AUROC": 0.662,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hPPARg",
+      "n_active": 17,
+      "strong_cc_AUROC": 0.569,
+      "full_AUROC": 0.72,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hPR",
+      "n_active": 15,
+      "strong_cc_AUROC": 0.522,
+      "full_AUROC": 0.513,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_TR_hNET",
+      "n_active": 30,
+      "strong_cc_AUROC": 0.717,
+      "full_AUROC": 0.683,
+      "verdict": "no_advantage"
+    }
+  ],
+  "null_control": {
+    "split_half": {
+      "sd_from_first_batch": 1.536,
+      "n_first": 135,
+      "n_heldout": 139,
+      "heldout_type1_raw_at_0.05": 0.194,
+      "heldout_type1_calibrated_at_0.05": 0.065,
+      "heldout_type1_calibrated_at_0.01": 0.0
+    },
+    "powered_runs": 274,
+    "mean_AUROC_full": 0.503,
+    "mean_AUROC_strong_cc": 0.491,
+    "mean_delta": 0.0116,
+    "sd_z": 1.54,
+    "sd_z_by_n_active": {
+      "15-29": 1.628,
+      "30-59": 1.43,
+      "60+": 1.351
+    },
+    "type1_raw_at_0.05": 0.179,
+    "type1_raw_at_0.01": 0.073,
+    "type1_calibrated_at_0.05_in_sample": 0.058,
+    "bh_advantage_calls_raw_pipeline": 0
+  }
+}

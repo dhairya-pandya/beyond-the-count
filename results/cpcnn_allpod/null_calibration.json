@@ -1,0 +1,17 @@
+{
+  "n_runs": 300,
+  "n_powered_runs": 274,
+  "sd_strong": 1.5399682248496809,
+  "mean_z_strong": 0.1608958179950944,
+  "type1_at_0.05_strong_uncalibrated": 0.17883211678832117,
+  "sd_scalar": 1.446988709323875,
+  "mean_z_scalar": 0.3109403758768364,
+  "type1_at_0.05_scalar_uncalibrated": 0.18248175182481752,
+  "null_from": "cpcnn_allpod",
+  "auroc_null_q95": {
+    "full": 0.6492404904904905,
+    "strong": 0.6419491436925647,
+    "q": 0.95,
+    "n_null_runs": 274
+  }
+}
