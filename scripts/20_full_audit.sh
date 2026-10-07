@@ -7,17 +7,18 @@ set -uo pipefail
 cd "$(dirname "$0")/.."
 PY=.venv/bin/python
 NJ=${1:-8}
+STAGES=${2:-ABC}   # e.g. "BC" to skip the audits when their tables already exist
 L=results/logs
 mkdir -p $L
 stamp() { echo "=== $1 $(date)"; }
-for fs in cellprofiler cpcnn dino; do
+[[ "$STAGES" == *A* ]] && for fs in cellprofiler cpcnn dino; do
   stamp "audit $fs"; $PY scripts/03_run_audit.py --feature-set $fs --agg allpod --n-repeats 3 --n-boot 1000 --n-jobs $NJ > $L/full_$fs.log 2>&1
 done
-declare -A RUNS=( [cellprofiler]=100 [cpcnn]=75 [dino]=30 )   # endpoints x 2 permutations x (seed 0, seed 1 for the first two) -> 400 / 300 / 60 runs
-for fs in cellprofiler cpcnn dino; do
-  stamp "null $fs"; $PY scripts/08_null_control.py --feature-set $fs --agg allpod --n-endpoints ${RUNS[$fs]} --n-perms 2 --n-repeats 3 --n-boot 1000 --seed 0 --n-jobs $NJ > $L/fullnull_$fs.log 2>&1
+runs_for() { case "$1" in cellprofiler) echo 100;; cpcnn) echo 75;; dino) echo 30;; esac; }   # endpoints x 2 permutations x (seed 0, plus seed 1 for the first two) -> 400 / 300 / 60 runs
+[[ "$STAGES" == *B* ]] && for fs in cellprofiler cpcnn dino; do
+  stamp "null $fs"; $PY scripts/08_null_control.py --feature-set $fs --agg allpod --n-endpoints $(runs_for $fs) --n-perms 2 --n-repeats 3 --n-boot 1000 --seed 0 --n-jobs $NJ > $L/fullnull_$fs.log 2>&1
   if [ "$fs" != "dino" ]; then
-    $PY scripts/08_null_control.py --feature-set $fs --agg allpod --n-endpoints ${RUNS[$fs]} --n-perms 2 --n-repeats 3 --n-boot 1000 --seed 1 --append --n-jobs $NJ >> $L/fullnull_$fs.log 2>&1
+    $PY scripts/08_null_control.py --feature-set $fs --agg allpod --n-endpoints $(runs_for $fs) --n-perms 2 --n-repeats 3 --n-boot 1000 --seed 1 --append --n-jobs $NJ >> $L/fullnull_$fs.log 2>&1
   fi
 done
 for fs in cellprofiler cpcnn dino; do
