@@ -1,0 +1,300 @@
+{
+  "config": "dino_allpod",
+  "n_endpoints_tested": 404,
+  "n_by_category": {
+    "cellbased": 292,
+    "cellfree": 72,
+    "cytotox": 38,
+    "native": 2
+  },
+  "n_powered": 181,
+  "n_indeterminate": 223,
+  "frac_indeterminate": 0.552,
+  "powered_by_category": {
+    "cellbased": 147,
+    "cytotox": 24,
+    "cellfree": 8,
+    "native": 2
+  },
+  "verdict_by_category": {
+    "cellbased": {
+      "indeterminate": 145,
+      "morphology_advantage": 36,
+      "no_advantage": 111
+    },
+    "cellfree": {
+      "indeterminate": 64,
+      "morphology_advantage": 0,
+      "no_advantage": 8
+    },
+    "cytotox": {
+      "indeterminate": 14,
+      "morphology_advantage": 17,
+      "no_advantage": 7
+    },
+    "native": {
+      "indeterminate": 0,
+      "morphology_advantage": 1,
+      "no_advantage": 1
+    }
+  },
+  "funnel": {
+    "tested": 404,
+    "naive_delta_gt0_all": 291,
+    "naive_delta_gt0_powered": 155,
+    "powered_raw_p_lt_0.05_uncorrected": 102,
+    "bh_q_lt_0.05_raw_bootstrap_p": 92,
+    "bh_q_lt_0.05_null_calibrated_p": 54
+  },
+  "advantage_vs_strong_raw": 92,
+  "advantage_vs_scalar_raw": 85,
+  "frac_powered_delta_gt0": 0.856,
+  "n_powered_delta_gt0": 155,
+  "null_sd": {
+    "strong": 1.273,
+    "scalar": 1.322
+  },
+  "advantage_vs_scalar_baseline": 59,
+  "advantage_vs_scalar_but_not_vs_strong": 17,
+  "advantage_vs_strong_but_not_vs_scalar": 12,
+  "median_AUROC_powered": {
+    "scalar_cc": 0.557,
+    "strong_cc": 0.544,
+    "full": 0.68
+  },
+  "median_delta_powered": 0.114,
+  "median_delta_advantage": 0.186,
+  "AUROC_sd_powered_full": 0.131,
+  "AUROC_sd_indeterminate_full": 0.179,
+  "indeterminate_full_AUROC_below_0.4_or_above_0.8": 58,
+  "indeterminate_full_AUROC_below_0.4": 36,
+  "calibration_powered": {
+    "median_brier_skill": -0.055,
+    "median_ece": 0.083,
+    "median_calib_slope": 0.353,
+    "frac_slope_lt_0.8": 1.0,
+    "frac_brier_skill_gt0": 0.315,
+    "median_brier_raw_vs_recal": [
+      0.1078,
+      0.1002
+    ]
+  },
+  "native": {
+    "MT": {
+      "scalar_cc_AUROC": 0.8441,
+      "strong_cc_AUROC": 0.8663,
+      "full_AUROC": 0.9197,
+      "delta_AUROC": 0.0533,
+      "delta_z": 4.9523,
+      "calibrated_p": 0.0001,
+      "fdr_q": 0.0008,
+      "fdr_q_scalar": 0.0,
+      "verdict": "morphology_advantage",
+      "verdict_scalar": "morphology_advantage",
+      "verdict_uncalibrated": "morphology_advantage"
+    },
+    "LDH": {
+      "scalar_cc_AUROC": 0.9402,
+      "strong_cc_AUROC": 0.9591,
+      "full_AUROC": 0.9803,
+      "delta_AUROC": 0.0212,
+      "delta_z": 2.4654,
+      "calibrated_p": 0.0264,
+      "fdr_q": 0.0759,
+      "fdr_q_scalar": 0.0129,
+      "verdict": "no_advantage",
+      "verdict_scalar": "morphology_advantage",
+      "verdict_uncalibrated": "morphology_advantage"
+    },
+    "cell_count": {
+      "scalar_cc_AUROC": 0.9821,
+      "strong_cc_AUROC": 1.0,
+      "full_AUROC": 0.9953,
+      "delta_AUROC": -0.0047,
+      "delta_z": -3.0311,
+      "calibrated_p": 0.9914,
+      "fdr_q": NaN,
+      "fdr_q_scalar": NaN,
+      "verdict": "positive_control",
+      "verdict_scalar": "positive_control",
+      "verdict_uncalibrated": "positive_control"
+    }
+  },
+  "top_advantage": [
+    {
+      "endpoint_id": "TOX21_AR_LUC_MDAKB2_Agonist_3uM_Nilutamide",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 19,
+      "strong_cc_AUROC": 0.388,
+      "full_AUROC": 0.897,
+      "delta_AUROC": 0.509,
+      "fdr_q": 0.0
+    },
+    {
+      "endpoint_id": "BSK_SAg_Eselectin",
+      "category": "cellbased",
+      "assay_target_family": "cell adhesion molecules",
+      "n_active": 30,
+      "strong_cc_AUROC": 0.434,
+      "full_AUROC": 0.832,
+      "delta_AUROC": 0.397,
+      "fdr_q": 0.0
+    },
+    {
+      "endpoint_id": "TOX21_ERa_BLA_Agonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 20,
+      "strong_cc_AUROC": 0.369,
+      "full_AUROC": 0.744,
+      "delta_AUROC": 0.375,
+      "fdr_q": 0.005
+    },
+    {
+      "endpoint_id": "LTEA_HepaRG_ABCG2",
+      "category": "cellbased",
+      "assay_target_family": "transporter",
+      "n_active": 25,
+      "strong_cc_AUROC": 0.39,
+      "full_AUROC": 0.765,
+      "delta_AUROC": 0.375,
+      "fdr_q": 0.0
+    },
+    {
+      "endpoint_id": "BSK_3C_MCP1",
+      "category": "cellbased",
+      "assay_target_family": "cytokine",
+      "n_active": 17,
+      "strong_cc_AUROC": 0.437,
+      "full_AUROC": 0.791,
+      "delta_AUROC": 0.354,
+      "fdr_q": 0.003
+    },
+    {
+      "endpoint_id": "TOX21_GR_BLA_Agonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 17,
+      "strong_cc_AUROC": 0.32,
+      "full_AUROC": 0.665,
+      "delta_AUROC": 0.344,
+      "fdr_q": 0.019
+    },
+    {
+      "endpoint_id": "CEETOX_H295R_CORTISOL",
+      "category": "cellbased",
+      "assay_target_family": "steroid hormone",
+      "n_active": 18,
+      "strong_cc_AUROC": 0.413,
+      "full_AUROC": 0.756,
+      "delta_AUROC": 0.342,
+      "fdr_q": 0.005
+    },
+    {
+      "endpoint_id": "LTEA_HepaRG_SLC22A1",
+      "category": "cellbased",
+      "assay_target_family": "transporter",
+      "n_active": 18,
+      "strong_cc_AUROC": 0.385,
+      "full_AUROC": 0.723,
+      "delta_AUROC": 0.338,
+      "fdr_q": 0.005
+    },
+    {
+      "endpoint_id": "BSK_SAg_CD69",
+      "category": "cellbased",
+      "assay_target_family": "cytokine",
+      "n_active": 23,
+      "strong_cc_AUROC": 0.494,
+      "full_AUROC": 0.807,
+      "delta_AUROC": 0.314,
+      "fdr_q": 0.003
+    },
+    {
+      "endpoint_id": "TOX21_GR_BLA_Antagonist_ratio",
+      "category": "cellbased",
+      "assay_target_family": "nuclear receptor",
+      "n_active": 53,
+      "strong_cc_AUROC": 0.555,
+      "full_AUROC": 0.858,
+      "delta_AUROC": 0.304,
+      "fdr_q": 0.0
+    }
+  ],
+  "cellfree_powered_endpoints": [
+    {
+      "endpoint_id": "NVS_ADME_hCYP3A4",
+      "n_active": 19,
+      "strong_cc_AUROC": 0.27,
+      "full_AUROC": 0.299,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_GPCR_hOpiate_mu",
+      "n_active": 22,
+      "strong_cc_AUROC": 0.481,
+      "full_AUROC": 0.594,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_MP_hPBR",
+      "n_active": 33,
+      "strong_cc_AUROC": 0.559,
+      "full_AUROC": 0.381,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hER",
+      "n_active": 20,
+      "strong_cc_AUROC": 0.505,
+      "full_AUROC": 0.464,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hGR",
+      "n_active": 32,
+      "strong_cc_AUROC": 0.661,
+      "full_AUROC": 0.514,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hPPARg",
+      "n_active": 17,
+      "strong_cc_AUROC": 0.574,
+      "full_AUROC": 0.565,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_NR_hPR",
+      "n_active": 15,
+      "strong_cc_AUROC": 0.521,
+      "full_AUROC": 0.625,
+      "verdict": "no_advantage"
+    },
+    {
+      "endpoint_id": "NVS_TR_hNET",
+      "n_active": 30,
+      "strong_cc_AUROC": 0.717,
+      "full_AUROC": 0.797,
+      "verdict": "no_advantage"
+    }
+  ],
+  "null_control": {
+    "split_half": null,
+    "powered_runs": 58,
+    "mean_AUROC_full": 0.493,
+    "mean_AUROC_strong_cc": 0.478,
+    "mean_delta": 0.015,
+    "sd_z": 1.273,
+    "sd_z_by_n_active": {
+      "15-29": 1.214,
+      "30-59": 1.041,
+      "60+": 2.024
+    },
+    "type1_raw_at_0.05": 0.121,
+    "type1_raw_at_0.01": 0.052,
+    "type1_calibrated_at_0.05_in_sample": 0.052,
+    "bh_advantage_calls_raw_pipeline": 2
+  }
+}

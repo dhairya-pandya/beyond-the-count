@@ -1,0 +1,17 @@
+{
+  "n_runs": 60,
+  "n_powered_runs": 58,
+  "sd_strong": 1.273331289330001,
+  "mean_z_strong": 0.2331925131494658,
+  "type1_at_0.05_strong_uncalibrated": 0.1206896551724138,
+  "sd_scalar": 1.3221425963083198,
+  "mean_z_scalar": 0.24018978436709212,
+  "type1_at_0.05_scalar_uncalibrated": 0.10344827586206896,
+  "null_from": "dino_allpod",
+  "auroc_null_q95": {
+    "full": 0.6154443850333112,
+    "strong": 0.5952696697063452,
+    "q": 0.95,
+    "n_null_runs": 58
+  }
+}

@@ -1,0 +1,11 @@
+,value
+endpoints_scored_in_both_strata,48.0
+share_of_pairs_where_filter_applies,0.2259
+median_active_rate_applies,0.2188
+median_active_rate_not_applicable,0.108
+median_strong_cc_AUROC_applies,0.5443
+median_strong_cc_AUROC_not_applicable,0.5071
+median_full_AUROC_applies,0.5923
+median_full_AUROC_not_applicable,0.6675
+median_delta_applies,0.0542
+median_delta_not_applicable,0.1466
