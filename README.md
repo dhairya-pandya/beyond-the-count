@@ -44,7 +44,7 @@ Additional analyses (optional, all reproducible): `06_compare_to_paper.py` (agre
 (plate/well/batch-only probe), `10_feature_families.py` (CellProfiler feature-family attribution), `11_paper_faithful_cv.py` (re-run under the paper's
 own CV protocol), `12_headline_numbers.py` (every number in the report), `13_sensitivity_postprocess.py` (power threshold / alpha / chance-floored
 baseline), `14_fetch_example_images.py` (a dozen demo images, individually fetched from the Cell Painting Gallery), `16_build_report_pdf.py`
-(report PDF via headless Chrome), `run_all_configs.sh` (all feature-set × aggregation configurations; secondary ones run on powered endpoints only).
+(report PDF via headless Chrome), `17_simulation_validation.py` (audit validated on synthetic data with known truth), `19_filter_stratified.py` (re-score results by whether the cytotoxicity filter could apply), `20_full_audit.sh` (the full three-representation audit with matched nulls and all downstream tables), `21_robustness.sh` (aggregation rules and chemical-similarity folds), `run_all_configs.sh` (older multi-configuration driver).
 
 `03_run_audit.py` options: `--feature-set {cellprofiler,cpcnn,dino}`, `--agg {all,allpod,allpodcc}`, `--categories`, `--endpoints`
 (pilot runs), `--powered-only`, `--n-repeats`, `--n-boot`, `--n-jobs`, `--seed`.
@@ -81,7 +81,7 @@ takes ~15 min (CP-CNN) to ~30 min (CellProfiler) on a 10-core laptop; 200 permut
 
 ## Headline results (CellProfiler, `allpod`; details in `report/technical_report.pdf`)
 
-404 endpoints → 181 powered (55 % indeterminate) → 62 'wins' under a plain bootstrap → **9 certified** after null calibration (all 9 also certified with CP-CNN and DINOv2; cytotoxicity enrichment is confounded with endpoint size and reported as descriptive; MT advantage in 2 of 3 representations, LDH never; cell-free 0 of 8). Permuted-label control: raw false-positive rate 13 % at nominal 5 %, calibrated 4.9 % on held-out runs.
+404 endpoints → 181 powered (55 % indeterminate) → 64 'wins' under a plain bootstrap → **15 certified** after null calibration for CellProfiler (a band of 5–67 depending on the null sd; 15 for CP-CNN, 54 for DINOv2; 8 certified under all three; MT certified in all three representations, LDH never; cell-free 0 of 8; cytotoxicity enrichment is confounded with endpoint size and reported as descriptive). Permuted-label control at the audit's own settings: raw false-positive rate 10 % at nominal 5 %, calibrated 2.6 % on held-out runs.
 
 ## Reading the labels correctly
 
