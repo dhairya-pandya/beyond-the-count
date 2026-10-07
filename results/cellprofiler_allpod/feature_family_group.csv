@@ -1,0 +1,11 @@
+,morphology_advantage,no_advantage,share_of_features
+AreaShape,0.1062,0.1223,0.0935
+Correlation,0.1314,0.1384,0.1565
+Granularity,0.2966,0.3023,0.2449
+ImageQuality,0.0809,0.0782,0.0661
+Intensity,0.0951,0.0797,0.0976
+Neighbors,0.003,0.0034,0.0041
+ObjectSkeleton,0.0012,0.0016,0.002
+RadialDistribution,0.1248,0.1239,0.1301
+Texture,0.1587,0.1468,0.2012
+Threshold,0.0022,0.0035,0.0041

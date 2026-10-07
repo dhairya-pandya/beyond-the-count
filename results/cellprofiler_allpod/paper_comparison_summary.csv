@@ -1,0 +1,3 @@
+quantity,n,pearson,spearman,mean_ours_minus_paper,mad,endpoints,paper_naive_actual_gt_cc,ours_naive_delta_gt0_scalar,ours_powered,ours_indeterminate,ours_advantage_vs_scalar_BH,ours_advantage_vs_strong_BH,direction_agreement
+full model AUROC,357,0.60621622076753,0.6569913086881268,0.008631794680928602,0.09124482982816713,356,265,276,181,175,51,15,0.7275280898876404
+scalar cell-count AUROC,357,0.5720709177592702,0.5629627329204943,0.002056271658700056,0.0873587051024971,356,265,276,181,175,51,15,0.7275280898876404
