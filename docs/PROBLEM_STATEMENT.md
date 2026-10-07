@@ -185,22 +185,22 @@ This is the sharpest version of the chat's own phrasing: *"report which toxicity
 |---|---|---|---|---|
 | C1 | **Hundreds of simultaneous tests** | ~5 % of null endpoints "win" by chance | Benjamini–Hochberg FDR across powered endpoints | final |
 | C2 | **Tiny positive counts** (median 15 actives for a cell-based endpoint; 8 for cell-free) | AUROC is noise; both false wins and false losses | explicit power rule (≥15 actives and ≥15 inactives) → *indeterminate*; excluded from the FDR pool so they do not dilute power | final: 223 of 404 endpoints indeterminate |
-| C3 | **Weak baseline = strawman** | morphology looks better than it is | two baselines: the paper's scalar cell count and a *strong* cell-count-only model using the whole dose–response curve; the strong one is primary | final: 20 of 27 "wins" against the scalar baseline vanish against the strong one |
+| C3 | **Weak baseline = strawman** | morphology looks better than it is | two baselines: the paper's scalar cell count and a *strong* cell-count-only model using the whole dose–response curve; the strong one is primary | final: 38 of 51 "wins" against the scalar baseline vanish against the strong one |
 | C4 | **Replicate structure / leakage** | duplicated compounds in train and test inflate scores | one row per compound; compound-grouped, stratified, shuffled CV repeated 3×, out-of-fold predictions only | final; unit-tested (duplicates with noise features score at chance) |
-| C5 | **Analog series across folds** (salts, isomers, drug classes) | chemical similarity inflates all models | Butina clusters of ECFP4 similarity as CV groups (921 clusters; 765 compounds sit in multi-member clusters; largest cluster 18, penicillins) | implemented; the grouped audit is **planned** |
-| C6 | **The bootstrap p-value is anti-conservative** (it resamples test compounds but ignores the variability of the fitted models) | too many certified endpoints | **label-permutation null → empirical-null calibration** (Efron-style): p_cal = P(Z > z / sd₀), with sd₀ estimated from permuted-label runs | final: raw false-positive rate 13.2 % at nominal 5 %; calibrated 4.9 % on held-out runs |
+| C5 | **Analog series across folds** (salts, isomers, drug classes) | chemical similarity inflates all models | Butina clusters of ECFP4 similarity as CV groups (921 clusters; 765 compounds sit in multi-member clusters; largest cluster 18, penicillins) | implemented; the grouped audit and its own null are in the robustness run (report §4.10) |
+| C6 | **The bootstrap p-value is anti-conservative** (it resamples test compounds but ignores the variability of the fitted models) | too many certified endpoints | **label-permutation null → empirical-null calibration** (Efron-style): p_cal = P(Z > z / sd₀), with sd₀ estimated from permuted-label runs | final: raw false-positive rate 10.3 % (CellProfiler) to 17.9 % (CP-CNN) at nominal 5 %; calibrated 2.6 % / 6.5 % on held-out runs |
 | C7 | **Endpoints are correlated** (shared compounds, related assays) | BH's guarantees assume independence or positive dependence | stated as a limitation; the permutation null is run through the *same* pipeline | limitation |
 | C8 | **Class re-weighting makes probabilities over-confident** | misleading "confidence" in the demo | calibration slope, ECE, Brier skill, cross-validated Platt recalibration | final: median slope 0.33 |
-| C9 | **Cell count is not the only possible shortcut** (plate, well, batch) | a layout artefact could masquerade as morphology | separate technical-confound probe | final: plate/well/batch alone predict at chance (AUROC 0.510) |
-| C10 | **Is the audit itself correct?** | a method nobody validated | (a) permutation null; (b) positive control; (c) **simulation with known ground truth** (shortcut-only, morphology-adds, morphology-only, null endpoints) | (a)(b) final; (c) implemented, **running** |
-| C11 | **The paper's headline sensitivity numbers may be biased by a minimum over many tests** | a "× more sensitive" claim that is partly selection | paired POD fold audit: paper's definition vs single endpoints vs single-endpoint representations | implemented, **planned** |
+| C9 | **Cell count is not the only possible shortcut** (plate, well, batch) | a layout artefact could masquerade as morphology | separate technical-confound probe | final: plate/well/batch alone predict at chance (AUROC 0.512) |
+| C10 | **Is the audit itself correct?** | a method nobody validated | (a) permutation null; (b) positive control; (c) **simulation with known ground truth** (shortcut-only, morphology-adds, morphology-only, null endpoints) | (a)(b) final; (c) final: null and shortcut-only endpoints are credited in 3.7 % and 2.2 % of cases after calibration (8.0 % and 5.6 % raw); power is high for large effects and only 25–39 % for the weakest effects at 15–59 actives |
+| C11 | **The paper's headline sensitivity numbers may be biased by a minimum over many tests** | a "× more sensitive" claim that is partly selection | paired POD fold audit: paper's definition vs single endpoints vs single-endpoint representations | implemented as a module; the run is optional and was cut from the schedule |
 | C12 | **"Morphology" is not orthogonal to density** | an "advantage" may be a better density proxy | stated as a limitation; compound-level breakdown shows *where* the advantage lies (§7.5) | partly addressed |
 
 ---
 
 ## 6. What we built to solve it
 
-The code lives in `src/cpsa/`; numbered scripts in `scripts/` run each stage; everything is CPU-only, seeded, and covered by 44 unit tests. 
+The code lives in `src/cpsa/`; numbered scripts in `scripts/` run each stage; everything is CPU-only, seeded, and covered by 50 unit tests. 
 ![The audit pipeline](../results/figures/pipeline.png)
 
 ### 6.1 Data layer
@@ -231,12 +231,12 @@ Permutation null with split-half validation; the positive control; the technical
 ### 6.8 New modules added after the first full run (this week)
 | module | purpose | status |
 |---|---|---|
-| `signal_class` | split "no advantage" into *count-explained* vs *no detectable signal* | implemented, run on two configurations (**preliminary**) |
-| `api` (+ `simulate`) | dataset-agnostic entry point: any profile table + baseline table + binary labels → verdicts, with unit tests on synthetic data where the truth is known; a **simulation study** recovers power and false-credit rates | implemented and tested; the simulation is **running** |
-| `compound_classes` | per-compound benefit and class breakdown (§7.5) | implemented, run on the primary configuration (**preliminary**) |
-| `chem_groups` | chemical-similarity cluster CV groups (RDKit) | implemented; `--group-by chem_cluster` available; grouped audit **planned** |
-| `pod_audit` | paired-fold audit of the 2.5×/8×/16× sensitivity claim | module and tests done; script and run **planned** |
-| SHAP explanations, an FDA-structured "evidence pack" generator, optional conformal prediction sets | interpretability and regulatory packaging | **planned** |
+| `signal_class` | split "no advantage" into *count-explained* vs *no detectable signal* | implemented, run on all three representations (final) |
+| `api` (+ `simulate`) | dataset-agnostic entry point: any profile table + baseline table + binary labels → verdicts, with unit tests on synthetic data where the truth is known; a **simulation study** recovers power and false-credit rates | implemented and tested; the simulation is final (§C10) |
+| `compound_classes` | per-compound benefit and class breakdown (§7.5) | implemented, run on all three representations (final; intervals in §7.5) |
+| `chem_groups` | chemical-similarity cluster CV groups (RDKit) | implemented and run (report §4.10) |
+| `pod_audit` | paired-fold audit of the 2.5×/8×/16× sensitivity claim | module and tests done; script and run cut from the schedule (optional) |
+| SHAP explanations, an FDA-structured "evidence pack" generator, conformal prediction sets | interpretability and regulatory packaging | **dropped** after the arena review (no rubric gain, extra surface area) |
 
 ### 6.9 Deliverables built so far
 A 17-page technical report (PDF), a Kaggle write-up draft, a demo-video script, a Streamlit app (endpoint explorer, compound explorer, audit table, enrichment and robustness, example images from the public gallery, method), a README, a pinned requirements file and a clean-environment dry run.
@@ -245,60 +245,63 @@ A 17-page technical report (PDF), a Kaggle write-up draft, a demo-video script, 
 
 ## 7. What we have found so far
 
-*(Primary configuration: CellProfiler features, `allpod` aggregation. Final unless marked.)*
+*(Final run of 7 October: all three representations audited on every endpoint, each with its own matched-settings permutation null. Primary configuration: CellProfiler features, `allpod` aggregation. Full detail and tables: `report/technical_report.md` §4.)*
 
 ### 7.1 Most endpoints cannot support a claim
 404 endpoints tested; **181 powered; 223 (55 %) indeterminate** (cell-based 145 of 292, cell-free 64 of 72, cytotoxicity 14 of 38). For indeterminate endpoints the full-model AUROC spreads far wider than for powered ones (sd 0.175 vs 0.117), and 56 of them lie outside 0.4–0.8.
 
-### 7.2 The plain bootstrap would have over-called by a factor of about seven
+### 7.2 The plain bootstrap would have over-called by a factor of about four
 | step | endpoints |
 |---|---|
-| ΔAUROC > 0 against the strong baseline ("naive win") | 291 |
-| … and powered | 158 |
-| … and raw p < 0.05 | 88 |
-| … and BH q < 0.05 on **raw** bootstrap p | **62** |
-| … and BH q < 0.05 on **null-calibrated** p | **9** |
+| ΔAUROC > 0 against the strong baseline ("naive win") | 292 |
+| … and powered | 160 |
+| … and raw p < 0.05 | 95 |
+| … and BH q < 0.05 on **raw** bootstrap p | **64** |
+| … and BH q < 0.05 on **null-calibrated** p | **15** |
+
+In 379 powered label-permutation runs at the audit's own settings the z-score has sd 1.37 where a valid test would give 1.0, so the raw p-value rejects at nominal 5 % in **10.3 %** of runs. Calibrating with an sd estimated from half of the runs brings the error rate on the other half to 2.6 % (nominal 5 %). CP-CNN's inflation is larger (sd 1.54; raw 17.9 %). DINOv2's null has only 58 powered runs (sd 1.27) and is the weakest. An earlier null that used fewer CV repeats and resamples estimated sd 1.45 and a count of 9; the matched null is the one we report.
 
 ![How many apparent wins survive each step](../results/figures/correction_funnel.png)
 
-The calibration is not cosmetic. In 424 powered label-permutation runs the z-score has sd 1.45 (95 % interval 1.34–1.56) where a valid test would give 1.0; the raw p-value rejects at nominal 5 % in **13.2 %** of runs. Calibrating with an sd estimated from the first 141 runs brings the false-positive rate on the other 283 runs to **4.9 %** (nominal 5 %). A matched-settings re-check (3 CV repeats, 1,000 resamples, 91 runs) gives sd 1.33 [1.13–1.51]; using 1.45 then yields 3.3 % — conservative. No permuted run produced a `morphology_advantage` verdict.
-
 ![Label-permutation control: raw p-values are too liberal; the empirical null is wider than N(0,1)](../results/figures/null_control.png)
 
-Median ΔAUROC over the 181 powered endpoints is +0.095 and 87 % are positive: the signal is broad, but only large effects can be certified one endpoint at a time at 15–60 actives.
+Median ΔAUROC over the 181 powered endpoints is +0.094 and 88 % are positive: the signal is broad, but only large effects can be certified one endpoint at a time at 15–60 actives. **The certified count is a band:** 67 / 38 / 23 / 15 / 5 at null sd 1.0 / 1.2 / 1.33 / 1.45 / 1.65.
 
-### 7.3 A stable core of 9 across representations
-| representation | null sd₀ | certified vs strong baseline | vs scalar baseline |
+### 7.3 Overlap across representations
+| representation | null sd₀ (powered null runs) | certified vs strong baseline | vs scalar baseline |
 |---|---|---|---|
-| CellProfiler (primary) | 1.45 | **9** | 27 |
-| CP-CNN | 1.23 | 33 | 56 |
-| DINOv2 (null borrowed from CellProfiler; conservative) | 1.45 | 40 | 39 |
+| CellProfiler (primary) | 1.37 (379) | **15** | 51 |
+| CP-CNN | 1.54 (274) | 15 | 29 |
+| DINOv2 | 1.27 (58) | 54 | 59 |
 
-All 9 CellProfiler-certified endpoints are certified under the other two representations too (union 46; 27 under at least two). The nine: PR-bla antagonist, GR-bla antagonist, PXR agonist, a BioMAP proliferation assay, and five cytotoxicity-burst endpoints (kidney, intestinal, HEK293, ME-180, ERR-HEK293T).
+Every CellProfiler-certified and every CP-CNN-certified endpoint is also certified with DINOv2; **8 endpoints are certified under all three** (MT, the PR-bla and GR-bla antagonist assays, two BioMAP assays, and the cytotoxicity endpoints HEK293, ME-180 and ERR-HEK293T); 22 are certified under at least two and 54 under any.
 
 ### 7.4 The paper's own readouts
 | readout | scalar cc | strong cc | full (CP) | Δ | certified? |
 |---|---|---|---|---|---|
-| MT | 0.835 | 0.878 | 0.916 | +0.037 | CP-CNN and DINOv2 yes (q≈0.005); CellProfiler borderline (q = 0.063) |
-| LDH | 0.936 | 0.958 | 0.969 | +0.011 | **never** (q 0.14–0.30); but certified against the *scalar* baseline |
+| MT | 0.835 | 0.873 | 0.916 | +0.042 | **yes in all three** (q = 0.019 / 0.039 / 0.001) |
+| LDH | 0.936 | 0.957 | 0.969 | +0.011 | **never at 5 %** (q = 0.27 / 0.29 / 0.076); but certified against the *scalar* baseline |
 | cell_count (control) | 0.975 | **1.000** | 0.991 | — | control passes |
 
 This reproduces the paper's "morphology beats cell count for MT but not LDH" — and shows that the LDH conclusion *depends on baseline strength*: against the one-number baseline morphology looks better than it is.
 
-### 7.5 Biology: a coherent family and a mechanistic signature
-- **Endpoint level [corrected after the arena review]:** Unadjusted, cytotoxicity endpoints look over-represented among advantage endpoints (CellProfiler 5/24 vs 2.5 % elsewhere, q = 0.007; CP-CNN 10/24, q = 0.010; DINOv2 16/24, q < 0.001), but they are far larger (median 97.5 actives vs 25 for cell-based endpoints), so they are simply easier to certify. Restricted to endpoints with at least 50 actives the difference disappears (CellProfiler cytotoxicity 5/22 vs cell-based 4/20, odds ratio 1.18, p = 1.0; CP-CNN 10/22 vs 9/20, OR 1.02; DINOv2 16/22 vs 10/20, OR 2.67, p = 0.20, undecided; computed on the pre-rerun tables and to be recomputed). We therefore report it as a descriptive pattern confounded with endpoint size, not as a finding. Cell-free endpoints: **0 of the 8 testable** show an advantage. No other target family, cell line or tissue is enriched in any representation (liver-derived assays are *not* favoured).
-- **Compound level [preliminary]:** among compounds that are *active* in an endpoint, the benefit of morphology over cell count is **+0.145 for compounds that react in Cell Painting but *not* in cell count, MT or LDH ("sub-lethal" compounds)**, +0.122 for MT/LDH-reactive compounds without cell loss, and only **+0.012 for compounds that cause cell loss**. In plain words: *where cells die, counting them already ranks the compounds; where cells stay alive but change, morphology adds the information.* This is the data's version of the explanation "morphology reads sub-lethal stress before cells are lost" — a mechanism-free test, because the compound classes come from readouts, not from assumptions about biology. It will be recomputed in the full audit.
-- **Signal classes [preliminary]:** of 181 powered endpoints, **39 are count-explained, 51 show morphology signal that cannot be certified as an advantage, 82 show no detectable signal, 9 are certified advantage.** Most cytotoxicity endpoints (16 of 24) are count-explained; where morphology is additionally certified there, it adds on top of a baseline that already works (descriptive; endpoint size is a confounder).
-- **Feature level [final]:** importance is diffuse — nearly identical for advantage and non-advantage endpoints (granularity features carry 31 % of gain vs 25 % of features; image-level features 26 % vs 19 %): no single channel or compartment explains where morphology wins.
+### 7.5 Biology
+- **Endpoint level [descriptive, corrected after the arena review]:** cell-free endpoints: **0 of the 8 testable** show an advantage. Unadjusted, cytotoxicity endpoints look over-represented among certified ones with CellProfiler (7/24 vs 5 % elsewhere, q = 0.003) and DINOv2 (17/24, q < 0.001) but not CP-CNN (4/24, q = 0.36); they are also much larger (median 97.5 actives vs 25), and restricted to endpoints with at least 50 actives the difference is not significant (CellProfiler OR 1.87, p = 0.49; CP-CNN OR 0.89; DINOv2 OR 3.40, p = 0.11, undecided). We therefore treat it as a pattern confounded with endpoint size, not a finding. No other family is enriched in more than one representation.
+- **Compound level [final, no multiplicity-adjusted claim beyond the CIs]:** among compounds that are *active* in an endpoint, the benefit of morphology over cell count is **+0.149 [0.103, 0.188]** for compounds that react in Cell Painting but *not* in cell count, MT or LDH, **+0.128 [0.098, 0.162]** for MT/LDH-reactive compounds without cell loss, and only **+0.010 [0.001, 0.019]** for compounds that cause cell loss. In plain words: *where cells die, counting them already ranks the compounds; where cells stay alive but change, morphology adds the information.* The compound classes come from readouts, not from assumptions about biology, which makes this a mechanism-free test; it is an association within one dataset and is not yet controlled for the baseline's score range.
+- **Signal classes:** of 181 powered endpoints, **30 are count-explained, 57 show morphology signal that cannot be certified, 79 show no detectable signal, 15 are certified.**
+- **Feature level:** importance is diffuse — nearly identical for certified and other endpoints (granularity 29.7 % vs 30.2 % of gain, against 24.5 % of features).
 
 ### 7.6 It is not a layout artefact
-Plate, mean well row/column and batch alone predict the labels at chance (mean AUROC 0.510); adding them to the strong cell-count model changes nothing (0.564 vs 0.557); for none of the 9 certified endpoints does "technical + cell count" match the full profile.
+Plate, mean well row/column, batch and replicate counts alone predict the labels at chance (mean AUROC 0.512); adding them to the strong cell-count model changes nothing (0.563 vs 0.555); for none of the 15 certified endpoints does "technical + cell count" match the full profile.
 
-### 7.7 Confidence is not trustworthy as delivered
-For every powered endpoint the calibration slope is below 0.8 (median **0.33**, i.e. strongly over-confident); median expected calibration error 0.081; only 32 % of powered endpoints beat the prevalence predictor in Brier score. Cross-validated Platt recalibration lowers the median Brier score from 0.112 to 0.104; the demo shows recalibrated probabilities with each endpoint's calibration diagnostics.
+### 7.7 The cytotoxicity filter and the shortcut
+Re-scoring the saved predictions by whether the cytotoxicity filter could apply (48 cell-based endpoints scored in both strata): the filter could apply to 22.6 % of pairs; the strong cell-count baseline is near chance in both strata (0.534 vs 0.518), the full profile is stronger where the filter cannot apply (0.649 vs 0.548), so morphology's median advantage is larger there (+0.118 vs +0.035). Descriptive: the strata also separate cytotoxic from non-cytotoxic compounds.
 
-### 7.8 Robustness [final]
-Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 8 / **9** / 16 / 24 (the threshold was fixed at 15 in advance and not tuned; a stricter threshold shrinks the BH pool and so raises the count). α = 0.10: 30. Chance-floored baseline: 9 of 9 retained. Aggregation rule (vs strong baseline): `all` 18, `allpod` 9, `allpodcc` 0 — a stated limitation.
+### 7.8 Confidence is not trustworthy as delivered
+For every powered endpoint the calibration slope is below 0.8 (median **0.33**, strongly over-confident); median expected calibration error 0.081; only 32 % of powered endpoints beat the prevalence predictor in Brier score. Cross-validated Platt recalibration lowers the median Brier score from 0.112 to 0.104; the demo shows recalibrated probabilities with each endpoint's calibration diagnostics.
+
+### 7.9 Robustness
+Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 19 / **15** / 22 / 26 (the threshold was fixed at 15 in advance and not tuned). α = 0.10: 36. Chance-floored baseline: 13 of the 15 retained. Aggregation rule (vs strong baseline): `all` 18, `allpod` 15, `allpodcc` 3 (MT not certified under `allpodcc`). Chemical-similarity folds (921 Butina clusters): median full-model AUROC 0.650 → 0.651 and all 15 primary endpoints remain certified (24 in total with that run's own null).
 
 ---
 
@@ -308,11 +311,11 @@ Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 8 / **9** 
 
 **What we explicitly do not claim:**
 - Organ-on-a-chip results. The data are **2D hepatocyte plate cultures**; the work is positioned as a validation methodology that chip assays should adopt.
-- That the certified count (9 / 33 / 40) *estimates* how many endpoints benefit — it is a lower bound limited by power.
+- That the certified count (15 / 15 / 54, or 5–67 across plausible null sds for CellProfiler) *estimates* how many endpoints benefit — it is a band limited by power.
 - Anything beyond the reading of 0 as "non-hit" (§3.3b); anything about donor variability (single donor or pool; to be confirmed in the data audit), kinetics (one 44-hour time point), or in-vivo hepatotoxicity labels (the repository's `Invivo_ranking` column has no definition we could verify, so we did not use it).
 
 **Threats to validity** (all stated in the report):
-1. The empirical-null sd is an estimate (CellProfiler 424 runs, CP-CNN 190); DINOv2's null was not run.
+1. The empirical-null sd is an estimate (CellProfiler 379 powered runs, CP-CNN 274, DINOv2 only 58).
 2. BH under correlated endpoints.
 3. "Morphology" and cell density are not orthogonal; the strong baseline sees only cell-count summaries.
 4. The strong-baseline count depends on the aggregation rule.
@@ -361,7 +364,7 @@ The first message of the chat (hidden in the share) held the team's earlier brai
 - **The domain-mismatch risk, named early.** 2D plates are not a chip. The chat advised arguing for relevance explicitly (a validation methodology organ-chip toxicology should adopt) rather than hoping judges would not notice. The report does this.
 
 ### 9.4 The plan and where we are against it
-The chat's plan had a biology track (A1–A7: labels, tables, annotations, categories, enrichment, limitations, framing), an ML track (B1–B9: load, merge, baseline, full model, scale, FDR, power check, calibration, reusable script) and an integration track (C1–C5: demo, report, video, repo, dry run), with a go/no-go gate on day 5: *if almost nothing survives multiple-testing correction, that is still an honest finding but changes the story.* That is almost exactly what happened: 62 raw "wins" became 9 after proper calibration.
+The chat's plan had a biology track (A1–A7: labels, tables, annotations, categories, enrichment, limitations, framing), an ML track (B1–B9: load, merge, baseline, full model, scale, FDR, power check, calibration, reusable script) and an integration track (C1–C5: demo, report, video, repo, dry run), with a go/no-go gate on day 5: *if almost nothing survives multiple-testing correction, that is still an honest finding but changes the story.* That is almost exactly what happened: 64 raw "wins" became 15 after proper calibration (a band of 5–67 depending on the null sd).
 
 | item | status |
 |---|---|
@@ -402,7 +405,7 @@ The chat's plan had a biology track (A1–A7: labels, tables, annotations, categ
 |---|---|---|
 | Importance (30 %) | regulatory timeliness (FDA draft guidance), generality of the shortcut problem | 2D plates, not chips — mitigated by framing and explicit non-claims |
 | Innovation (30 %) | a *validated* audit method; the permutation-calibration finding; strong-vs-weak baseline; compound-level mechanism test | the paper already made the basic comparison; innovation must be sold as the method, not the comparison |
-| Results (20 %) | reproduction of the paper; replication across three representations; honest nulls | only 9 endpoints certified in the primary configuration may look thin — framed as a lower bound with a broad positive effect |
+| Results (20 %) | reproduction of the paper; replication across three representations; honest nulls | 15 certified endpoints (a band of 5–67 depending on the null sd) may look thin — framed as a band limited by power, with a broad positive effect (88 % of powered endpoints) |
 | Reproducibility (10 %) | CPU-only, seeded, MD5-checked, pinned, clean-environment run, 44 tests | the full audit takes ~30 minutes (CellProfiler) on 10 cores; documented |
 | Presentation (10 %) | demo with endpoint/compound views and real images; video script ready | the video still has to be recorded |
 
@@ -410,15 +413,14 @@ The chat's plan had a biology track (A1–A7: labels, tables, annotations, categ
 
 ## 12. Open items and roadmap
 
-**Immediately (before the full audit).**
-1. Finish and read the simulation study (power and false-credit rates by effect size and number of actives).
-2. Write the script for the POD sensitivity audit (the 2.5×/8×/16× claim) and run it from the supplementary tables.
-3. Run the chemical-cluster grouped audit on the powered endpoints and compare with compound-grouped results (AUROC retention; does the core of 9 survive?).
-4. SHAP explanations for the certified endpoints; the FDA-structured evidence pack; (optional) conformal prediction sets.
+**Done since the first version of this document:** the simulation study; the chemical-cluster and aggregation-rule robustness runs (launched 7 October, report §4.10); the full three-representation audit (all 404 endpoints, 3 CV repeats, 1,000 resamples) with a matched-settings permutation null per representation; label-semantics corrections from the team's label audit (§3.3b); the arena review of improvements (adopted: matched nulls, a count reported as a band, size-controlled enrichment, a compound-level result with intervals, the technical probe with replicate counts; dropped: SHAP, conformal sets, an evidence-pack generator, per-size-bin nulls, tuning XGBoost).
 
-**Then: the full three-representation audit.** All 404 endpoints (not only powered ones) for CellProfiler, CP-CNN **and DINOv2** with 3 CV repeats and 1,000 bootstrap resamples; a permutation null for **each** representation (including DINOv2, whose null was previously borrowed) at matched settings; all downstream tables (enrichment, compound classes, signal classes, sensitivity grids, figures, report numbers) regenerated from those outputs.
-
-**Finally.** Update the report, Kaggle write-up and demo; record the video; publish the repository and the demo; fill in the team declaration; re-verify the FDA and Nature Communications citations against the primary pages; submit.
+**Still to do (in this order).**
+1. Fill the aggregation and chemical-similarity rows of report §4.10 when `scripts/21_robustness.sh` finishes; regenerate the appendix tables.
+2. Rebuild the technical-report and problem-statement PDFs; push `results/` to the repository in small commits.
+3. A biologist's judgment of the reporter endpoints certified in more than one representation (PR-bla and GR-bla antagonist, PXR agonist, the BioMAP assays): are they antagonist-mode assays that cytotoxicity can mimic?
+4. Optional if time allows: more DINOv2 null runs (58 is thin), a density-residualised comparator (CellProfiler only), a POD sensitivity audit of the paper's 2.5×/8×/16× claim.
+5. Record the video; publish the repository and the demo; fill in the team declaration; re-verify the FDA and Nature Communications citations against the primary pages; submit.
 
 ---
 
@@ -456,7 +458,7 @@ The chat's plan had a biology track (A1–A7: labels, tables, annotations, categ
 
 **"Why is the bootstrap wrong?"** It treats the trained models as fixed and only resamples the test compounds. In reality, a different training set gives a different model. With few positives this extra variability is large, so the bootstrap's confidence statements are too narrow. We measured this by shuffling labels and measured how much too narrow (≈1.45×).
 
-**"Are the 9 endpoints biologically sensible?"** Five are cytotoxicity-burst endpoints (the general-stress family; their apparent enrichment is confounded with endpoint size, §7.5). The four reporter assays — PR-bla antagonist, GR-bla antagonist, PXR agonist, and a BioMAP proliferation assay — are the ones we most want a biologist's judgment on: antagonist-mode assays can be cytotoxicity-confounded, and PXR is a xenobiotic-sensing receptor that hepatocytes express. We do not interpret them beyond reporting.
+**"Are the certified endpoints biologically sensible?"** Seven of the 15 are cytotoxicity endpoints (cell-type and tissue summaries where 1 = cytotoxic, so predicting them is partly predicting general cellular stress) and one is MT. The reporter assays — PR-bla antagonist, GR-bla antagonist, PXR agonist, and three BioMAP assays — are the ones we most want a biologist's judgment on: antagonist-mode assays can be cytotoxicity-confounded, and PXR is a xenobiotic-sensing receptor that hepatocytes express. We do not interpret them beyond reporting.
 
 **"Why not use the in-vivo liver-injury labels?"** The annotation file has an `Invivo_ranking` column with values 1–4, but its definition is not documented in the repository, and the DILI identifiers carry no labels. Guessing would be worse than omitting it.
 
