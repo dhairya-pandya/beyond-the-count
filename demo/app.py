@@ -122,7 +122,7 @@ with tab_ep:
                      f"(95% bootstrap CI {r['delta_ci_lo']:+.3f} to {r['delta_ci_hi']:+.3f}); z = {r['delta_z']:.2f}; "
                      f"null-calibrated one-sided p = {r['calibrated_p']:.4f} (raw bootstrap p = {r['bootstrap_p']:.4f}); "
                      f"BH-FDR q = {'n/a' if pd.isna(r['fdr_q']) else format(r['fdr_q'], '.4f')}.")
-            st.caption("The raw bootstrap p-value is anti-conservative (label-permutation control: 13% false positives at the nominal 5% for CellProfiler features), "
+            st.caption("The raw bootstrap p-value is anti-conservative (label-permutation control: about 10% false positives at the nominal 5% for CellProfiler features, 18% for CP-CNN), "
                        "so verdicts use p-values calibrated against that empirical null.")
             st.caption(f"Versus the paper's simpler scalar cell-count baseline: Δ = {r['delta_AUROC_scalar']:+.3f}, verdict = {r['verdict_scalar']}.")
         else:
