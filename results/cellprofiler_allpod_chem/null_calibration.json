@@ -1,0 +1,17 @@
+{
+  "n_runs": 100,
+  "n_powered_runs": 88,
+  "sd_strong": 1.4423116812680419,
+  "mean_z_strong": 0.19415703102815718,
+  "type1_at_0.05_strong_uncalibrated": 0.14772727272727273,
+  "sd_scalar": 1.197642008241102,
+  "mean_z_scalar": 0.31193450933394107,
+  "type1_at_0.05_scalar_uncalibrated": 0.125,
+  "null_from": "cellprofiler_allpod_chem",
+  "auroc_null_q95": {
+    "full": 0.6295225941937472,
+    "strong": 0.6608789696681713,
+    "q": 0.95,
+    "n_null_runs": 88
+  }
+}
