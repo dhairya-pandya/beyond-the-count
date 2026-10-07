@@ -1,0 +1,67 @@
+baseline,by,group,n_in_group,n_adv_in_group,n_adv_out,n_out,frac_adv_in,frac_adv_out,odds_ratio,p,q
+vs_strong_cc,assay_design_type,binding reporter,40,0,0,141,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_design_type,cytotoxicity burst,24,0,0,157,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_design_type,inducible reporter,103,0,0,78,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_design_type,viability reporter,7,0,0,174,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_mode,agonist-mode,15,0,0,166,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_mode,antagonist-mode,15,0,0,166,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_mode,other,151,0,0,30,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,cell adhesion molecules,6,0,0,175,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,cell morphology,5,0,0,176,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,cyp,17,0,0,164,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,cytokine,16,0,0,165,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,cytotoxicity,24,0,0,157,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,dna binding,21,0,0,160,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,nuclear receptor,47,0,0,134,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,steroid hormone,10,0,0,171,0.0,0.0,,1.0,1.0
+vs_strong_cc,assay_target_family,transporter,8,0,0,173,0.0,0.0,,1.0,1.0
+vs_strong_cc,category,cellbased,147,0,0,34,0.0,0.0,,1.0,1.0
+vs_strong_cc,category,cellfree,8,0,0,173,0.0,0.0,,1.0,1.0
+vs_strong_cc,category,cytotox,24,0,0,157,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,H295R,10,0,0,171,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,HCT116,6,0,0,175,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,HEK293T,15,0,0,166,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,HepG2,28,0,0,153,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,HepaRG,30,0,0,151,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,umbilical vein endothelium,14,0,0,167,0.0,0.0,,1.0,1.0
+vs_strong_cc,cell_short_name,umbilical vein endothelium and peripheral blood mononuclear cells,15,0,0,166,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,adrenal gland,10,0,0,171,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,breast,9,0,0,172,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,cervix,5,0,0,176,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,intestinal,6,0,0,175,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,kidney,22,0,0,159,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,liver,64,0,0,117,0.0,0.0,,1.0,1.0
+vs_strong_cc,tissue,vascular,33,0,0,148,0.0,0.0,,1.0,1.0
+vs_scalar_cc,assay_design_type,cytotoxicity burst,24,19,29,157,0.7916666666666666,0.18471337579617833,16.77241379310345,7.859277682233363e-09,3.1437110728933454e-08
+vs_scalar_cc,assay_design_type,viability reporter,7,2,46,174,0.2857142857142857,0.26436781609195403,1.1130434782608696,0.5961009841331477,0.9998820008731087
+vs_scalar_cc,assay_design_type,binding reporter,40,7,41,141,0.175,0.2907801418439716,0.5173688100517368,0.956258346538231,0.9998820008731087
+vs_scalar_cc,assay_design_type,inducible reporter,103,17,31,78,0.1650485436893204,0.3974358974358974,0.2996999249812453,0.9998820008731087,0.9998820008731087
+vs_scalar_cc,assay_mode,antagonist-mode,15,5,43,166,0.3333333333333333,0.25903614457831325,1.430232558139535,0.36162284658026234,0.814169168020817
+vs_scalar_cc,assay_mode,other,151,40,8,30,0.26490066225165565,0.26666666666666666,0.990990990990991,0.6058228020710709,0.814169168020817
+vs_scalar_cc,assay_mode,agonist-mode,15,3,45,166,0.2,0.2710843373493976,0.6722222222222223,0.814169168020817,0.814169168020817
+vs_scalar_cc,assay_target_family,cytotoxicity,24,19,29,157,0.7916666666666666,0.18471337579617833,16.77241379310345,7.859277682233363e-09,7.073349914010028e-08
+vs_scalar_cc,assay_target_family,cytokine,16,5,43,165,0.3125,0.2606060606060606,1.2896405919661733,0.42463267146791145,1.0
+vs_scalar_cc,assay_target_family,dna binding,21,6,42,160,0.2857142857142857,0.2625,1.1238095238095238,0.5014527235630695,1.0
+vs_scalar_cc,assay_target_family,cell adhesion molecules,6,1,47,175,0.16666666666666666,0.26857142857142857,0.5446808510638298,0.8473383849315353,1.0
+vs_scalar_cc,assay_target_family,transporter,8,1,47,173,0.125,0.27167630057803466,0.3829787234042553,0.9197736891847103,1.0
+vs_scalar_cc,assay_target_family,cyp,17,2,46,164,0.11764705882352941,0.2804878048780488,0.34202898550724636,0.9684014889108316,1.0
+vs_scalar_cc,assay_target_family,nuclear receptor,47,8,40,134,0.1702127659574468,0.29850746268656714,0.48205128205128206,0.974884650670616,1.0
+vs_scalar_cc,assay_target_family,cell morphology,5,0,48,176,0.0,0.2727272727272727,0.0,1.0,1.0
+vs_scalar_cc,assay_target_family,steroid hormone,10,0,48,171,0.0,0.2807017543859649,0.0,1.0,1.0
+vs_scalar_cc,category,cytotox,24,19,29,157,0.7916666666666666,0.18471337579617833,16.77241379310345,7.859277682233363e-09,2.357783304670009e-08
+vs_scalar_cc,category,cellbased,147,27,21,34,0.1836734693877551,0.6176470588235294,0.1392857142857143,0.9999998346458568,1.0
+vs_scalar_cc,category,cellfree,8,0,48,173,0.0,0.2774566473988439,0.0,1.0,1.0
+vs_scalar_cc,cell_short_name,umbilical vein endothelium,14,6,42,167,0.42857142857142855,0.25149700598802394,2.232142857142857,0.13128968532429486,0.919027797270064
+vs_scalar_cc,cell_short_name,HepG2,28,7,41,153,0.25,0.2679738562091503,0.9105691056910569,0.6585648025312784,1.0
+vs_scalar_cc,cell_short_name,HCT116,6,1,47,175,0.16666666666666666,0.26857142857142857,0.5446808510638298,0.8473383849315353,1.0
+vs_scalar_cc,cell_short_name,HEK293T,15,2,46,166,0.13333333333333333,0.27710843373493976,0.4013377926421405,0.9445744514644385,1.0
+vs_scalar_cc,cell_short_name,umbilical vein endothelium and peripheral blood mononuclear cells,15,1,47,166,0.06666666666666667,0.28313253012048195,0.18085106382978725,0.992138688586732,1.0
+vs_scalar_cc,cell_short_name,HepaRG,30,3,45,151,0.1,0.2980132450331126,0.2617283950617284,0.9962687539201288,1.0
+vs_scalar_cc,cell_short_name,H295R,10,0,48,171,0.0,0.2807017543859649,0.0,1.0,1.0
+vs_scalar_cc,tissue,breast,9,4,44,172,0.4444444444444444,0.2558139534883721,2.327272727272727,0.1901653208705304,1.0
+vs_scalar_cc,tissue,vascular,33,9,39,148,0.2727272727272727,0.2635135135135135,1.0480769230769231,0.5348414758555972,1.0
+vs_scalar_cc,tissue,intestinal,6,1,47,175,0.16666666666666666,0.26857142857142857,0.5446808510638298,0.8473383849315353,1.0
+vs_scalar_cc,tissue,kidney,22,3,45,159,0.13636363636363635,0.2830188679245283,0.4,0.9647197076246318,1.0
+vs_scalar_cc,tissue,liver,64,12,36,117,0.1875,0.3076923076923077,0.5192307692307693,0.9748511392709321,1.0
+vs_scalar_cc,tissue,adrenal gland,10,0,48,171,0.0,0.2807017543859649,0.0,1.0,1.0
+vs_scalar_cc,tissue,cervix,5,0,48,176,0.0,0.2727272727272727,0.0,1.0,1.0
