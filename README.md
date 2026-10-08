@@ -36,21 +36,42 @@ To rebuild the results from the raw data, run the numbered scripts in `scripts/`
 
 ## Architecture
 
-```
-Zenodo profiles ──► normalise per plate (DMSO-MAD) ──► filter correlated features ──► aggregate per compound
-                                                                                         │
-ToxCast / Tox21 labels ─► label semantics (untested = missing, cytotoxicity filter) ─────┤
-                                                                                         ▼
-                              three XGBoost models on identical compound-grouped folds (5-fold × 3 repeats)
-                              • full morphology profile
-                              • cell count, single number (the paper's baseline)
-                              • cell count, dose–response curve (stronger baseline)
-                                                                                         │
-                          paired compound bootstrap of ΔAUROC ──► label-permutation null ─┤
-                                                                                         ▼
-                       power check (≥15 positives and ≥15 non-hits) ──► Benjamini–Hochberg FDR ──► verdicts
-                                                                                         │
-                      calibration · enrichment by assay family · compound-level benefit ─┴─► Streamlit demo
+```mermaid
+flowchart TD
+    A["Zenodo profiles<br/>CellProfiler · CP-CNN · DINOv2"] --> B["Normalise per plate<br/>DMSO-MAD"]
+    B --> C["Filter correlated features"]
+    C --> D["Aggregate per compound<br/>all · allpod · allpodcc"]
+    L["ToxCast / Tox21 labels"] --> M["Label semantics<br/>untested = missing<br/>cytotoxicity filter"]
+
+    D --> E
+    M --> E
+    subgraph E["Three XGBoost models · identical compound-grouped folds (5-fold × 3 repeats)"]
+        E1["Full morphology<br/>profile"]
+        E2["Cell count<br/>single number"]
+        E3["Cell count<br/>dose-response curve"]
+    end
+
+    E --> F["Paired compound bootstrap<br/>of ΔAUROC"]
+    P["Label-permutation null"] --> G
+    F --> G["Calibrated p-values"]
+    G --> H["Power check<br/>≥15 positives and ≥15 non-hits"]
+    H --> I["Benjamini–Hochberg FDR"]
+    I --> V["Verdicts<br/>morphology_advantage · no_advantage<br/>indeterminate · positive_control"]
+
+    V --> X1["Probability calibration<br/>Brier · ECE · slope"]
+    V --> X2["Enrichment by<br/>assay family"]
+    V --> X3["Compound-level<br/>benefit"]
+    X1 --> U["Streamlit demo"]
+    X2 --> U
+    X3 --> U
+
+    classDef input fill:#E8ECEF,stroke:#5E6B78,color:#17222E
+    classDef model fill:#F7E3F1,stroke:#B01E82,color:#17222E
+    classDef out fill:#17222E,stroke:#17222E,color:#FFFFFF
+    class A,L input
+    class E1,E2,E3 model
+    class V,U out
+    style E fill:#F4F6F7,stroke:#B01E82,color:#17222E
 ```
 
 | stage | module |
