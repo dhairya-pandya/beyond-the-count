@@ -1,0 +1,15 @@
+{
+  "n_runs": 555,
+  "sd": 1.377244964668836,
+  "mean_z": 0.1554422683172569,
+  "type1_at_0.05_uncalibrated": 0.13333333333333333,
+  "n_powered": 181,
+  "adds_beyond_count": 23,
+  "main_advantage": 15,
+  "both": 15,
+  "median_delta_nested": 0.0911025145067698,
+  "median_delta_main": 0.0944272445820433,
+  "median_full_AUROC": 0.6504736458586349,
+  "median_logreg_AUROC": 0.6176470588235294,
+  "median_nested_AUROC": 0.6607142857142857
+}
