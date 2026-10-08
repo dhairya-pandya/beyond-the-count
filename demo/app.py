@@ -289,8 +289,8 @@ with st.expander("New to Cell Painting?"):
         "predicts many toxicity labels, so a morphology model can look good without reading any morphology."
     )
 
-tab_ep, tab_cmp, tab_tbl, tab_enr, tab_img, tab_about = st.tabs(
-    ["Endpoints", "Compounds", "All results", "Where morphology wins", "Example images", "Method"])
+tab_ep, tab_cmp, tab_tbl, tab_enr, tab_img, tab_chip, tab_about = st.tabs(
+    ["Endpoints", "Compounds", "All results", "Where morphology wins", "Example images", "Organ-on-chip", "Method"])
 
 # ------------------------------------------------------------------ endpoint explorer
 with tab_ep:
@@ -520,6 +520,75 @@ with tab_img:
             if len(rr) and (ASSETS / "images" / rr.iloc[0]["file"]).exists():
                 conc = f", {rr.iloc[0]['concentration_uM']:.3g} µM" if kind == "treated" else ""
                 col.image(str(ASSETS / "images" / rr.iloc[0]["file"]), caption=f"{title}{conc}. Plate {rr.iloc[0]['plate']}, well {rr.iloc[0]['well']}")
+
+# ------------------------------------------------------------------ organ-on-chip
+with tab_chip:
+    st.markdown("### What the audit says at organ-on-chip scale")
+    st.write("A liver chip study tests tens of compounds, not about a thousand, and runs each compound on several chips. This tab shows what the "
+             "audit can conclude at that scale and what a chip team would need to change. Every number below comes from simulation with known "
+             "ground truth or from the plate data above. No chip data was used.")
+    fit_path = RES / "chip_scale" / "planner_fit.json"
+    if fit_path.exists():
+        import json
+        fit = json.loads(fit_path.read_text())
+        st.markdown("#### Plan a study")
+        c1, c2 = st.columns(2, gap="large")
+        n_comp = c1.slider("Compounds tested", 20, 400, 60, step=5)
+        share = c2.slider("Share of compounds that are active", 0.10, 0.50, 0.30, step=0.05, format="%.2f")
+        n1, n0 = n_comp * share, n_comp * (1 - share)
+        n_eff = 4 / (1 / n1 + 1 / n0)
+        mid = fit["a"] + fit["b"] * np.log(n_eff)
+        typ, lo, hi = np.exp(mid), np.exp(mid - fit["resid_sd"]), np.exp(mid + fit["resid_sd"])
+        st.metric("Smallest advantage over cell count this design can detect", f"{typ:.2f} AUROC", help="Typical value; the band is one residual standard deviation of the real endpoints around the fitted curve.")
+        st.caption(f"Typical range {lo:.2f} to {hi:.2f}. {int(round(n1))} active and {int(round(n0))} non-hit compounds. "
+                   + ("Advantages smaller than this would not be certified; a value above 0.50 means no advantage could be detected at all." if typ > 0.3 else
+                      "Advantages smaller than this would not be certified."))
+        st.caption(f"Curve fitted on the {fit['n_endpoints']} real endpoints of the plate audit (R² {fit['r2']:.2f}): detectable effect scales roughly with the inverse square root of the effective sample size.")
+    sim = RES / "chip_scale" / "summary.csv"
+    if sim.exists():
+        st.markdown("#### Simulation across study sizes")
+        st.image(str(RES / "chip_scale" / "chip_scale.png"))
+        sm = pd.read_csv(sim).rename(columns={
+            "n_compounds": "Compounds", "indeterminate_strict": "Cannot be judged (15/15 rule)", "indeterminate_chip": "Cannot be judged (5/5 rule)",
+            "credited_raw_on_null": "False credit, raw p", "credited_calibrated_on_null": "False credit, calibrated p",
+            "power_calibrated": "Power, calibrated p", "median_min_detectable_effect": "Smallest detectable advantage", "null_sd": "Null width"})
+        st.dataframe(sm[["Compounds", "Cannot be judged (15/15 rule)", "Cannot be judged (5/5 rule)", "False credit, raw p", "False credit, calibrated p",
+                         "Power, calibrated p", "Smallest detectable advantage", "Null width"]], hide_index=True, width="stretch",
+                     column_config={c: st.column_config.NumberColumn(format="%.2f") for c in sm.columns if c not in ("Compounds", "n_endpoints")})
+    leak_img = RES / "chip_scale" / "replicate_leakage.png"
+    if leak_img.exists():
+        st.markdown("#### Group by compound when compounds are replicated over chips")
+        l1, l2 = st.columns([1, 1], gap="large")
+        l1.image(str(leak_img))
+        l2.write("Forty compounds with random labels, each run on three chips. If cross-validation treats every chip as independent, a model recognises "
+                 "a compound it has already seen on another chip and the AUROC rises above the true 0.5. Grouping folds by compound removes that, "
+                 "so the audit keeps compound as the grouping unit and a chip design would add donor or lot as further groups.")
+    st.markdown("#### What carries over and what changes")
+    k1, k2 = st.columns(2, gap="large")
+    k1.markdown(
+        """
+**Carries over**
+- The question: does the full profile beat a cell-count baseline?
+- Paired bootstrap of the AUROC difference, with a calibrated null
+- The power check, the *indeterminate* verdict and the detectable-effect report
+- Label hygiene: untested stays missing, a zero is a non-hit
+- Grouped cross-validation
+"""
+    )
+    k2.markdown(
+        """
+**Changes for a chip**
+- **Labels:** albumin, urea, CYP3A4 activity and clinical DILI categories replace the ToxCast and Tox21 battery
+- **Baseline:** a 3D cell-count proxy such as nuclei per z-stack or tissue volume
+- **Features:** chips are imaged and profiled again, with PDMS autofluorescence and z-stacks in mind
+- **Grouping:** compound, chip and donor or lot
+- **Sample size:** a pooled or multi-site design, reported as an estimate with an interval
+"""
+    )
+    st.markdown("#### A realistic first pilot")
+    st.write("Twenty to sixty compounds spread across the DILIrank categories, two or three functional endpoints chosen in advance, a defined 3D "
+             "cell-count proxy, folds grouped by compound and donor, and a result reported as the AUROC difference with its calibrated interval and "
+             "its detectable effect, in place of a table of verdicts.")
 
 # ------------------------------------------------------------------ method
 with tab_about:
