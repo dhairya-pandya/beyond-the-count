@@ -303,6 +303,12 @@ For every powered endpoint the calibration slope is below 0.8 (median **0.33**, 
 ### 7.9 Robustness
 Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 19 / **15** / 22 / 26 (the threshold was fixed at 15 in advance and not tuned). α = 0.10: 36. Chance-floored baseline: 13 of the 15 retained. Aggregation rule (vs strong baseline): `all` 18, `allpod` 15, `allpodcc` 3 (MT not certified under `allpodcc`). Chemical-similarity folds (921 Butina clusters): median full-model AUROC 0.650 → 0.651 and all 15 primary endpoints remain certified (24 in total with that run's own null).
 
+### 7.10 Review-driven additions (final)
+- **Nested question.** A fourth model sees morphology *and* the cell-count curve; compared with cell count alone (own permutation null, 600 runs, sd₀ 1.38, held-out calibrated rate 6.2 % at nominal 5 %) it **certifies 23 endpoints**, all 15 of the main audit among them (MT q = 0.015; LDH not, q = 0.19). Median AUROC 0.661 against 0.541 for cell count alone.
+- **Linear comparator.** A regularised logistic regression (strength chosen inside the training folds) reaches a median AUROC of 0.618 against 0.650 for the XGBoost model, so the signal is not specific to the tree model.
+- **What the data could detect.** The median minimum detectable effect (80 % power) over the 181 powered endpoints is 0.25 AUROC; 18 endpoints could detect 0.10, 36 could detect 0.15. "No detectable advantage" is absence of evidence, not equivalence, and each endpoint carries its detectable effect.
+- **Assay-level enrichment.** Treating whole assays as the exchangeable unit moves the CellProfiler cytotoxicity enrichment from Fisher p = 0.001 to p = 0.12 (DINOv2: 1 × 10⁻⁵ to 0.039), supporting the descriptive reading.
+
 ---
 
 ## 8. Scope, assumptions and threats to validity
@@ -316,7 +322,7 @@ Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 19 / **15*
 
 **Threats to validity** (all stated in the report):
 1. The empirical-null sd is an estimate (CellProfiler 379 powered runs, CP-CNN 274, DINOv2 only 58).
-2. BH under correlated endpoints.
+2. BH under correlated endpoints (valid under positive dependence, which is assumed; the enrichment test has an assay-level counterpart).
 3. "Morphology" and cell density are not orthogonal; the strong baseline sees only cell-count summaries.
 4. The strong-baseline count depends on the aggregation rule.
 5. Label heterogeneity (many assays, cell systems, ToxCast hit-calling).
@@ -416,7 +422,7 @@ The chat's plan had a biology track (A1–A7: labels, tables, annotations, categ
 **Done since the first version of this document:** the simulation study; the chemical-cluster and aggregation-rule robustness runs (launched 7 October, report §4.10); the full three-representation audit (all 404 endpoints, 3 CV repeats, 1,000 resamples) with a matched-settings permutation null per representation; label-semantics corrections from the team's label audit (§3.3b); the arena review of improvements (adopted: matched nulls, a count reported as a band, size-controlled enrichment, a compound-level result with intervals, the technical probe with replicate counts; dropped: SHAP, conformal sets, an evidence-pack generator, per-size-bin nulls, tuning XGBoost).
 
 **Still to do (in this order).**
-1. Fill the aggregation and chemical-similarity rows of report §4.10 when `scripts/21_robustness.sh` finishes; regenerate the appendix tables.
+1. Done: aggregation and chemical-similarity rows of report §4.10; nested model, logistic comparator, detectable effect and assay-level enrichment (§7.10, report §4.12).
 2. Rebuild the technical-report and problem-statement PDFs; push `results/` to the repository in small commits.
 3. A biologist's judgment of the reporter endpoints certified in more than one representation (PR-bla and GR-bla antagonist, PXR agonist, the BioMAP assays): are they antagonist-mode assays that cytotoxicity can mimic?
 4. Optional if time allows: more DINOv2 null runs (58 is thin), a density-residualised comparator (CellProfiler only), a POD sensitivity audit of the paper's 2.5×/8×/16× claim.
