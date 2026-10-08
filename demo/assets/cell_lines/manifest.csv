@@ -1,0 +1,9 @@
+cell_line,compound,plate,well,concentration_uM,file
+HepG2,DMSO control,B1001_R1,A23,0.0,HepG2_dmso.png
+HepG2,Nocodazole,B1001_R1,O24,5.0,HepG2_nocodazole.png
+HepG2,Bortezomib,B1006_R1,A13,10.0,HepG2_bortezomib.png
+U2OS,DMSO control,B1001_R1,A23,0.0,U2OS_dmso.png
+U2OS,Nocodazole,B1003_R1,D11,10.0,U2OS_nocodazole.png
+U2OS,Bortezomib,B1006_R1,A13,10.0,U2OS_bortezomib.png
+Primary hepatocytes,Nocodazole,plate_41002692,K09,100.0,Primary hepatocytes_nocodazole.png
+Primary hepatocytes,Bortezomib,plate_41002947,F10,100.0,Primary hepatocytes_bortezomib.png
