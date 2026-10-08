@@ -13,12 +13,12 @@ Every factual statement carries one of three provenance levels:
 | tag | meaning |
 |---|---|
 | **[verified]** | checked directly by us — in the data files, in our own code and results, or in a primary source we opened |
-| **[chat]** | stated in the planning conversation (the shared Claude chat) and *not* independently re-checked by us |
+| **[chat]** | stated in the team's planning notes (the early project discussion) and *not* independently re-checked by us |
 | **[ours]** | our reasoning, interpretation or design decision — arguable, and marked as such |
 
 Results carry one of three status levels: **final** (computed with the final code on the final data), **preliminary** (computed, but will be recomputed in the full three-representation audit that comes next), and **planned** (designed or implemented but not yet run).
 
-**A note on the planning chat.** The chat (https://claude.ai/share/057d4d81-f307-4f2b-aa1e-8eef3d6fea0b) is a *frozen snapshot*: when I re-read it today it contained exactly the same 16 exchanges as before (ending with the PowerShell `curl` exchange), differing only in relative timestamps. The first message of the chat contained a pasted "brainstorming summary" that the share view hides ("Files hidden when shared"); what it contained can only be inferred from the replies (§9). If the chat was continued after it was shared, a new share link is needed for me to see the continuation.
+**A note on the planning notes.** The **[chat]** tag refers to the team's early planning discussion (16 exchanges). Its opening message held a pasted brainstorming summary that is not preserved in this repository; what it contained can only be inferred from the replies (§9).
 
 ---
 
@@ -343,7 +343,7 @@ This section reconstructs the decision trail from the planning chat **[chat]** s
 A team that includes a biologist earns a +0.5 bonus on the interpretability-and-reliability dimension (cross-disciplinary bonus).
 
 ### 9.2 The candidate ideas
-The first message of the chat (hidden in the share) held the team's earlier brainstorming; the replies mention five ideas from it (ALS neurite phenotyping with leakage-aware evaluation, cardiotoxicity genetics, colon organoids, an image-quality-control tool for chips, and an endometriosis scorer). The chat then explored more; its final table covered fourteen candidates:
+The first message of the planning discussion held the team's earlier brainstorming; the replies mention five ideas from it (ALS neurite phenotyping with leakage-aware evaluation, cardiotoxicity genetics, colon organoids, an image-quality-control tool for chips, and an endometriosis scorer). The chat then explored more; its final table covered fourteen candidates:
 
 | id | idea | data | outcome |
 |---|---|---|---|
