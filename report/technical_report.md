@@ -2,7 +2,7 @@
 
 **Competition:** AI for Life Science Challenge (5th Pazhou Algorithm Competition) · **Category:** Model & Algorithm
 **Team:** <<TEAM COMPOSITION — declare members and disciplines (cross-disciplinary bonus)>>
-**Code:** <<GITHUB URL>> · **Demo:** <<STREAMLIT URL>> · **Video:** <<VIDEO URL>>
+**Code:** https://github.com/dhairya-pandya/beyond-the-count · **Demo:** https://beyond-the-count1.streamlit.app/ · **Video:** <<VIDEO URL>>
 
 > All numbers are regenerated from `results/` (see §7). Placeholders in `<<…>>` (team, URLs) are for the team to fill before submission.
 
