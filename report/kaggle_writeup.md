@@ -2,7 +2,7 @@
 
 # Cell Painting Shortcut Audit — does morphology really beat counting cells?
 
-**Team:** <<TEAM COMPOSITION — names, disciplines>> · **Code:** <<GITHUB URL>> · **Demo:** <<STREAMLIT URL>> · **Video (≤ 5 min):** <<VIDEO URL>> · **Technical report:** `report/technical_report.md` (PDF attached)
+**Team:** <<TEAM COMPOSITION — names, disciplines>> · **Code:** https://github.com/dhairya-pandya/beyond-the-count · **Demo:** https://beyond-the-count1.streamlit.app/ · **Video (≤ 5 min):** <<VIDEO URL>> · **Technical report:** `report/technical_report.md` (PDF attached)
 
 ## The problem
 Cell Painting is becoming a workhorse of human-relevant, non-animal toxicology (a "new approach methodology", NAM). But phenotypic AI can pass a benchmark for the wrong reason: for cytotoxicity-flavoured readouts, a model that only *counts surviving cells* can score suspiciously well, so a sophisticated morphology model may add nothing beyond that trivial signal. Regulators now ask for exactly this kind of technical characterisation (FDA draft NAM guidance, March 2026: context of use, human biological relevance, technical characterization, fit for purpose).
