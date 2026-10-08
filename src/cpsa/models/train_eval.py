@@ -4,8 +4,12 @@ from __future__ import annotations
 import numpy as np
 import pandas as pd
 from scipy.stats import rankdata
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegressionCV
 from sklearn.metrics import average_precision_score
 from sklearn.model_selection import StratifiedGroupKFold, StratifiedKFold
+from sklearn.pipeline import make_pipeline
+from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 
@@ -29,11 +33,25 @@ def make_model(y_train: np.ndarray, seed: int) -> XGBClassifier:
     )
 
 
-def oof_predict(X: pd.DataFrame, y: np.ndarray, groups: np.ndarray, n_splits: int, n_repeats: int, seed: int, shuffle: bool = True) -> np.ndarray:
+def make_logreg(seed: int):
+    """Regularised comparator: median-impute, standardise, L2 logistic regression whose strength is chosen by an inner 3-fold CV
+    on the training fold only (so no tuning ever sees the held-out fold)."""
+    return make_pipeline(
+        SimpleImputer(strategy="median"), StandardScaler(),
+        LogisticRegressionCV(Cs=np.logspace(-4, 0, 5), cv=StratifiedKFold(3, shuffle=True, random_state=seed), scoring="roc_auc",
+                             class_weight="balanced", max_iter=300, n_jobs=1),
+    )
+
+
+def oof_predict(X: pd.DataFrame, y: np.ndarray, groups: np.ndarray, n_splits: int, n_repeats: int, seed: int, shuffle: bool = True,
+                model: str = "xgb") -> np.ndarray:
     """Out-of-fold probabilities, shape (n_repeats, n). Folds are grouped (no group in train and test) and stratified.
 
     ``shuffle=False`` reproduces the source paper's protocol (plain unshuffled StratifiedKFold on row order); it needs one
-    row per group and is used only for the reproduction check."""
+    row per group and is used only for the reproduction check. ``model``: ``xgb`` (the paper's classifier) or ``logreg`` (regularised
+    linear comparator)."""
+    if model not in ("xgb", "logreg"):
+        raise ValueError("model must be 'xgb' or 'logreg'")
     if not shuffle and len(np.unique(groups)) != len(groups):
         raise ValueError("unshuffled StratifiedKFold ignores groups; it requires exactly one row per group")
     Xv = X.to_numpy(dtype="float32")
@@ -42,7 +60,7 @@ def oof_predict(X: pd.DataFrame, y: np.ndarray, groups: np.ndarray, n_splits: in
     for r in range(n_repeats):
         cv = StratifiedGroupKFold(n_splits=n_splits, shuffle=True, random_state=seed + r) if shuffle else StratifiedKFold(n_splits)
         for tr, te in cv.split(Xv, y, groups):
-            m = make_model(y[tr], seed + r)
+            m = make_model(y[tr], seed + r) if model == "xgb" else make_logreg(seed + r)
             m.fit(Xv[tr], y[tr])
             out[r, te] = m.predict_proba(Xv[te])[:, 1]
     return out
