@@ -289,8 +289,8 @@ with st.expander("New to Cell Painting?"):
         "predicts many toxicity labels, so a morphology model can look good without reading any morphology."
     )
 
-tab_ep, tab_cmp, tab_tbl, tab_enr, tab_img, tab_chip, tab_about = st.tabs(
-    ["Endpoints", "Compounds", "All results", "Where morphology wins", "Example images", "Organ-on-chip", "Method"])
+tab_ep, tab_cmp, tab_tbl, tab_enr, tab_img, tab_cells, tab_chip, tab_about = st.tabs(
+    ["Endpoints", "Compounds", "All results", "Where morphology wins", "Example images", "Cell lines", "Organ-on-chip", "Method"])
 
 # ------------------------------------------------------------------ endpoint explorer
 with tab_ep:
@@ -520,6 +520,105 @@ with tab_img:
             if len(rr) and (ASSETS / "images" / rr.iloc[0]["file"]).exists():
                 conc = f", {rr.iloc[0]['concentration_uM']:.3g} µM" if kind == "treated" else ""
                 col.image(str(ASSETS / "images" / rr.iloc[0]["file"]), caption=f"{title}{conc}. Plate {rr.iloc[0]['plate']}, well {rr.iloc[0]['well']}")
+
+# ------------------------------------------------------------------ cell lines
+with tab_cells:
+    st.markdown("### Cell lines: what they look like and where the endpoints come from")
+    st.write("The audit runs on primary human hepatocytes, but Cell Painting is used on many cell systems, and the toxicity assays behind the "
+             "endpoints use many more. Pick cells and a condition to compare them, then explore which cell systems the endpoints come from.")
+    cl_dir = ASSETS / "cell_lines"
+    cl_manifest = cl_dir / "manifest.csv"
+    SYSTEM_INFO = {
+        "Primary hepatocytes": "Freshly plated human liver cells from donors, polygonal and often with two nuclei. The closest of the three to liver physiology, and the cells of the main dataset (OASIS).",
+        "HepG2": "A human liver cancer line that grows in tight clusters. Widely used for toxicity screens, and imaged at four sites in the EU-OPENSCREEN bioactives collection.",
+        "U2OS": "A human bone cancer line with flat, spread-out cells. The standard reference line of large Cell Painting resources, shown here for contrast.",
+    }
+    st.markdown("#### See the cells")
+    c1, c2 = st.columns([1, 1], gap="large")
+    systems = c1.pills("Cell systems", list(SYSTEM_INFO), selection_mode="multi", default=list(SYSTEM_INFO), key="cl_systems")
+    cond = c2.pills("Condition", ["DMSO control", "Nocodazole", "Bortezomib"], selection_mode="single", default="DMSO control", key="cl_cond")
+    cond = cond or "DMSO control"
+    st.caption({"DMSO control": "Untreated cells (solvent only): the reference appearance of each cell system.",
+                "Nocodazole": "A microtubule disruptor: cells round up and the cytoskeleton collapses.",
+                "Bortezomib": "A proteasome inhibitor that is cytotoxic: the number of healthy cells drops."}[cond])
+    if not systems:
+        st.info("Pick at least one cell system above.")
+    elif not cl_manifest.exists():
+        st.info("Run `python scripts/26_fetch_cell_line_images.py` to fetch the example images.")
+    else:
+        cm = pd.read_csv(cl_manifest)
+        cols = st.columns(len(systems), gap="medium")
+        for col, system in zip(cols, systems):
+            col.markdown(f"**{system}**")
+            path, cap = None, None
+            om = ASSETS / "images" / "manifest.csv"
+            if system == "Primary hepatocytes" and cond == "DMSO control" and om.exists():
+                r0 = pd.read_csv(om).query("kind == 'dmso'").iloc[0]
+                path, cap = ASSETS / "images" / r0["file"], f"DMSO control, plate {r0['plate']}, well {r0['well']}"
+            else:
+                r1 = cm[(cm["cell_line"] == system) & (cm["compound"] == cond)]
+                if len(r1):
+                    path = cl_dir / r1.iloc[0]["file"]
+                    conc = "" if cond == "DMSO control" else f", {r1.iloc[0]['concentration_uM']:g} µM"
+                    cap = f"{cond}{conc}, plate {r1.iloc[0]['plate']}, well {r1.iloc[0]['well']}"
+            if path is not None and path.exists():
+                col.image(str(path), caption=cap)
+            else:
+                col.caption("No image for this combination.")
+            col.caption(SYSTEM_INFO[system])
+        st.caption("HepG2 and U2OS images: Cell Painting Gallery, cpg0036-EU-OS-bioactives, FMP site (CC0). Channels: DNA blue, ER green, AGP red, mitochondria magenta.")
+
+    st.markdown("#### Where the endpoints come from")
+    ce = audit.dropna(subset=["cell_short_name"]).copy()
+    ce["cell system"] = ce["cell_short_name"].str.replace("umbilical vein endothelium and peripheral blood mononuclear cells", "HUVEC + PBMC", regex=False) \
+                                           .str.replace("umbilical vein endothelium", "HUVEC", regex=False).str.replace("coronary artery smooth muscle cells", "coronary artery SMC", regex=False) \
+                                           .str.replace("B and peripheral blood mononuclear cells", "B cells + PBMC", regex=False)
+    top = ce["cell system"].value_counts()
+    keep_n = st.slider("Cell systems to show (largest first)", 5, min(25, len(top)), 12)
+    shown = top.index[:keep_n]
+    stack = ce[ce["cell system"].isin(shown)].groupby(["cell system", "verdict"]).size().reset_index(name="endpoints")
+    fig = px.bar(stack, y="cell system", x="endpoints", color="verdict", orientation="h", color_discrete_map=VERDICT_COLORS,
+                 category_orders={"cell system": list(shown), "verdict": VERDICT_ORDER})
+    fig.for_each_trace(lambda t: t.update(name=VERDICT_LABEL.get(t.name, t.name)))
+    style(fig, 120 + 28 * keep_n, title="Endpoints by assay cell system", legend_title_text="")
+    fig.update_yaxes(title=None)
+    fig.update_xaxes(title="endpoints")
+    st.plotly_chart(fig, width="stretch", theme=None, config={"displayModeBar": False})
+    pick_cl = st.selectbox("Open one cell system", list(shown), key="cl_pick")
+    sub = ce[ce["cell system"] == pick_cl]
+    n_adv = int((sub["verdict"] == "morphology_advantage").sum())
+    n_pow = int(sub["powered"].sum())
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Endpoints", len(sub))
+    m2.metric("Powered", n_pow)
+    m3.metric("Certified morphology advantage", n_adv)
+    st.dataframe(sub[["endpoint_id", "assay_target_family", "n_active", "n_inactive", "full_AUROC", "strong_cc_AUROC", "delta_AUROC", "fdr_q", "verdict"]]
+                 .sort_values("fdr_q"), hide_index=True, width="stretch")
+    st.caption("Cell system here means the cells used by the toxicity assay behind each endpoint, which can differ from the cells imaged for Cell Painting.")
+
+    eu_sum = RES / "eu_os" / "summary.json"
+    if eu_sum.exists():
+        import json
+        es = json.loads(eu_sum.read_text())
+        st.markdown("#### Same labels, different cells: HepG2 profiles against primary hepatocytes")
+        st.write(f"On the {es['n_compounds']} compounds present in both collections and {es['n_endpoints']} endpoints with enough data, the audit was run once "
+                 "with HepG2 profiles (four imaging sites, one concentration) and once with primary-hepatocyte profiles, against the same labels and the same "
+                 "single-number cell-count baseline.")
+        k1, k2, k3 = st.columns(3)
+        k1.metric("Certified with HepG2 profiles", es["certified_hepg2"])
+        k2.metric("Certified with primary hepatocytes", es["certified_oasis"])
+        k3.metric("Certified in both", es["certified_both"])
+        cmp_path = RES / "eu_os" / "comparison.csv"
+        if cmp_path.exists():
+            cp_ = pd.read_csv(cmp_path)
+            fig = px.scatter(cp_, x="full_AUROC_oasis", y="full_AUROC_hepg2", hover_name="endpoint_id", color="verdict_hepg2", color_discrete_map=VERDICT_COLORS)
+            fig.add_trace(go.Scatter(x=[0.3, 1], y=[0.3, 1], mode="lines", line=dict(dash="dash", color=GREY), showlegend=False))
+            fig.for_each_trace(lambda t: t.update(name=VERDICT_LABEL.get(t.name, t.name)))
+            style(fig, 400, title="AUROC of the full profile, endpoint by endpoint", legend_title_text="HepG2 verdict")
+            fig.update_xaxes(title="primary hepatocytes")
+            fig.update_yaxes(title="HepG2")
+            st.plotly_chart(fig, width="stretch", theme=None, config={"displayModeBar": False})
+        st.caption("Exploratory: HepG2 has a single concentration, so only the single-number cell-count baseline exists, and the labels come from the primary-hepatocyte study.")
 
 # ------------------------------------------------------------------ organ-on-chip
 with tab_chip:
