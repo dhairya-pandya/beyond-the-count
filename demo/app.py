@@ -28,10 +28,10 @@ VERDICT_COLORS = {"morphology_advantage": MAGENTA, "positive_control": BLUE, "no
 VERDICT_LABEL = {
     "morphology_advantage": "Morphology advantage",
     "positive_control": "Positive control",
-    "no_advantage": "No advantage over cell count",
+    "no_advantage": "No detectable advantage over cell count",
     "indeterminate": "Indeterminate, too few positives",
 }
-VERDICT_SHORT = {"morphology_advantage": "advantage", "positive_control": "control", "no_advantage": "no advantage",
+VERDICT_SHORT = {"morphology_advantage": "advantage", "positive_control": "control", "no_advantage": "no detectable advantage",
                  "indeterminate": "indeterminate"}
 
 st.set_page_config(page_title="Cell Painting Shortcut Audit", page_icon="🔬", layout="wide")
@@ -92,6 +92,10 @@ button:focus-visible, [data-baseweb="select"] input:focus-visible { outline: 3px
 [data-testid="stExpander"] summary { min-height: 46px; font-weight: 600; }
 [data-testid="stExpander"] { border-color: %RULE%; background: white; }
 
+.stats { margin: 0.2rem 0 0.6rem; }
+.stat { display: flex; justify-content: space-between; gap: 1rem; padding: 0.45rem 0; border-bottom: 1px solid %RULE%; font-size: 0.95rem; }
+.stat span { color: %SLATE%; max-width: 62%; }
+.stat b { font-weight: 600; text-align: right; font-variant-numeric: tabular-nums; }
 .footer { margin-top: 3rem; padding-top: 1rem; border-top: 1px solid %RULE%; color: %SLATE%; font-size: 0.93rem; }
 .footer a { color: %INK%; }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; animation: none !important; } }
@@ -128,6 +132,12 @@ def load_compounds() -> pd.DataFrame:
 @st.cache_data
 def load_dose_response() -> pd.DataFrame:
     return pd.read_parquet(ASSETS / "dose_response.parquet")
+
+
+@st.cache_data
+def load_optional(name: str):
+    p = RES / name
+    return pd.read_csv(p) if p.exists() else None
 
 
 # ------------------------------------------------------------------ figure helpers
@@ -211,9 +221,9 @@ def answer_sentence(r: pd.Series, n_powered: int) -> str:
                 f"a model that only knows cell counts scores {r['strong_cc_AUROC']:.2f}. "
                 f"The gap survives correction for testing {n_powered} endpoints{q}.")
     if v == "no_advantage":
-        return (f"Morphology does not reliably beat cell counts here. The full profile scores AUROC {r['full_AUROC']:.2f} "
-                f"and the cell-count-only model {r['strong_cc_AUROC']:.2f}; the difference is not certified after correcting "
-                f"for testing {n_powered} endpoints{q}.")
+        return (f"No detectable advantage over cell counts here. The full profile scores AUROC {r['full_AUROC']:.2f} and the "
+                f"cell-count-only model {r['strong_cc_AUROC']:.2f}; the difference is not certified after correcting for testing "
+                f"{n_powered} endpoints{q}. This is absence of evidence for an advantage, not proof the two are equivalent.")
     return (f"This endpoint is defined from cell count itself, so a cell-count model should score near 1.00 and does "
             f"({r['strong_cc_AUROC']:.2f}). It checks that the audit can spot a pure shortcut.")
 
@@ -261,7 +271,7 @@ st.markdown(
     f"""
 <div class="legend">
 <span class="item"><span class="dot" style="background:{MAGENTA}"></span><span class="num">{n_adv}</span>morphology advantage</span>
-<span class="item"><span class="dot" style="background:{GREY}"></span><span class="num">{n_no}</span>no advantage over cell count</span>
+<span class="item"><span class="dot" style="background:{GREY}"></span><span class="num">{n_no}</span>no detectable advantage over cell count</span>
 <span class="item"><span class="dot ring"></span><span class="num">{n_ind}</span>indeterminate</span>
 <span class="item"><span class="dot" style="background:{BLUE}"></span><span class="num">{int(counts.get('positive_control', 0))}</span>positive control</span>
 </div>
@@ -302,10 +312,18 @@ with tab_ep:
         if pd.notna(r.get("delta_AUROC")):
             names = ["Full morphology profile", "Cell count, dose-response curve", "Cell count, single number"]
             vals = [r["full_AUROC"], r["strong_cc_AUROC"], r["scalar_cc_AUROC"]]
-            fig = go.Figure(go.Bar(x=vals, y=names, orientation="h", marker_color=[MAGENTA, GREY, RING], text=[f"{v:.2f}" for v in vals],
+            colors = [MAGENTA, GREY, RING]
+            nested = load_optional("nested_table.csv")
+            nr = nested[nested["endpoint_id"] == ep] if nested is not None else None
+            if nr is not None and len(nr):
+                nr = nr.iloc[0]
+                names.insert(1, "Morphology plus cell count")
+                vals.insert(1, nr["nested_AUROC"])
+                colors.insert(1, "#D98CC4")
+            fig = go.Figure(go.Bar(x=vals, y=names, orientation="h", marker_color=colors, text=[f"{v:.2f}" for v in vals],
                                    textposition="outside", cliponaxis=False,
                                    hovertemplate="%{y}<br>AUROC %{x:.3f}<extra></extra>"))
-            style(fig, 250, title="Ranking accuracy by model", showlegend=False)
+            style(fig, 250 if len(names) == 3 else 300, title="Ranking accuracy by model", showlegend=False)
             fig.update_yaxes(title=None, autorange="reversed")
             fig.update_xaxes(title="AUROC (0.5 = chance)", range=[0.4, 1.05])
             st.plotly_chart(fig, width="stretch", theme=None, config={"displayModeBar": False})
@@ -319,7 +337,23 @@ with tab_ep:
                               "n/a" if pd.isna(r["fdr_q"]) else f"{r['fdr_q']:.4f}",
                               f"{r['delta_AUROC_scalar']:+.3f} ({VERDICT_SHORT.get(r['verdict_scalar'], r['verdict_scalar'])})"],
                 })
-                st.dataframe(stats, hide_index=True, width="stretch")
+                mde = load_optional("detectable_effect.csv")
+                mr = mde[mde["endpoint_id"] == ep] if mde is not None else None
+                extra_m, extra_v = [], []
+                if mr is not None and len(mr) and pd.notna(mr.iloc[0]["min_detectable_effect"]):
+                    extra_m.append("Smallest advantage this data could detect (80% power)")
+                    extra_v.append(f"{mr.iloc[0]['min_detectable_effect']:.2f} AUROC")
+                if nr is not None and len(nr):
+                    extra_m += ["Morphology plus cell count against cell count alone", "Same comparison: calibrated q-value and verdict"]
+                    extra_v += [f"{nr['delta_nested']:+.3f} (95% interval {nr['delta_nested_ci_lo']:+.3f} to {nr['delta_nested_ci_hi']:+.3f})",
+                                f"{nr['fdr_q_nested']:.4f}, {str(nr['verdict_nested']).replace('_', ' ')}"]
+                    if pd.notna(nr.get("logreg_AUROC")):
+                        extra_m.append("Regularised logistic regression on morphology (sanity check), AUROC")
+                        extra_v.append(f"{nr['logreg_AUROC']:.3f}")
+                if extra_m:
+                    stats = pd.concat([stats, pd.DataFrame({"measure": extra_m, "value": extra_v})], ignore_index=True)
+                rows_html = "".join(f"<div class='stat'><span>{m}</span><b>{v}</b></div>" for m, v in zip(stats["measure"], stats["value"]))
+                st.markdown(f"<div class='stats'>{rows_html}</div>", unsafe_allow_html=True)
                 st.caption("The raw bootstrap p-value is too optimistic. When we shuffled labels it flagged about 10% of endpoints at a "
                            "nominal 5% (18% for CP-CNN features), so verdicts use p-values calibrated against that shuffled-label null.")
         else:
@@ -416,10 +450,11 @@ with tab_enr:
     enr = load_enrichment()
     st.markdown("### Is the advantage concentrated in a type of assay?")
     st.write("For each assay or target family we ask whether it is over-represented among the endpoints with a certified morphology "
-             "advantage, compared with powered endpoints that have none (one-sided Fisher exact test, BH-adjusted within each grouping).")
+             "advantage, compared with powered endpoints that have none. The p-value is a one-sided Fisher exact test. Endpoints from one assay are correlated, "
+             "so the assay-level p-value repeats the test with whole assays as the unit (a permutation over assay clusters). Both are BH-adjusted within each grouping.")
     st.warning("Read these tables as descriptive. Cytotoxicity endpoints have about four times more actives than cell-based ones "
                "(median 97.5 against 25), so they are easier to certify. With at least 50 actives the cytotoxicity enrichment disappears "
-               "for CellProfiler and CP-CNN features and stays undecided for DINOv2.")
+               "for CellProfiler and CP-CNN features and stays undecided for DINOv2. The assay-level test is the more conservative of the two.")
     if enr is None:
         st.info("Run `python scripts/04_run_enrichment.py` to create results/enrichment.csv.")
     else:
@@ -434,11 +469,13 @@ with tab_enr:
         e = e.drop(columns=["baseline", "by"]).rename(columns={
             "group": "Group", "n_in_group": "Endpoints in group", "n_adv_in_group": "Advantage in group", "n_adv_out": "Advantage elsewhere",
             "n_out": "Endpoints elsewhere", "frac_adv_in": "Share in group", "frac_adv_out": "Share elsewhere", "odds_ratio": "Odds ratio",
-            "p": "p-value", "q": "q-value"})
+            "p": "p-value", "q": "q-value", "p_cluster": "Assay-level p-value", "q_cluster": "Assay-level q-value"})
         st.dataframe(e, width="stretch", hide_index=True, column_config={
             "Share in group": st.column_config.NumberColumn(format="%.2f"), "Share elsewhere": st.column_config.NumberColumn(format="%.2f"),
             "Odds ratio": st.column_config.NumberColumn(format="%.2f"), "p-value": st.column_config.NumberColumn(format="%.4f"),
-            "q-value": st.column_config.NumberColumn(format="%.4f")})
+            "q-value": st.column_config.NumberColumn(format="%.4f"),
+            "Assay-level p-value": st.column_config.NumberColumn(format="%.4f"),
+            "Assay-level q-value": st.column_config.NumberColumn(format="%.4f")})
         if (e["q-value"] < 0.05).any():
             st.success(f"{int((e['q-value'] < 0.05).sum())} group(s) are significantly enriched at q < 0.05.")
         else:
@@ -493,17 +530,25 @@ with tab_about:
 2. Is there enough data to say? An endpoint needs at least 15 active compounds and 15 non-hits. Otherwise it is *indeterminate*, and we publish no score for it.
 3. Where morphology wins, is the advantage concentrated in a coherent assay or target family?
 
+### What one row means
+Labels are per compound, so each compound is one row. Wells are averaged per compound, and the default rule (`allpod`) keeps only wells at or above the compound's point of departure, so low concentrations where nothing happens do not dilute the profile.
+
 ### The models
-All three use XGBoost (150 trees, learning rate 0.05, class-reweighted, as in the source paper).
+All use XGBoost (150 trees, learning rate 0.05, class-reweighted, as in the source paper), with these fixed settings so no tuning ever touches the test folds.
 - **Full morphology:** normalised Cell Painting features.
 - **Cell count, single number:** the paper's baseline, the mean cell count.
-- **Cell count, dose-response curve:** a stronger baseline that sees cell count at each of 8 concentrations, plus its minimum, area under the curve and the concentration where it falls. It still carries only cell-count information.
+- **Cell count, dose-response curve:** a stronger baseline that sees cell count at each of 8 concentrations, plus its minimum, area under the curve and the concentration where it falls. It still carries only cell-count information. No plate, well or batch features are used in any baseline.
+- **Morphology plus cell count:** a nested model that sees both feature sets. Comparing it with the cell-count curve alone answers the sharper question: does morphology add information on top of cell count?
+- **Regularised logistic regression:** a linear sanity check on the morphology features, with its regularisation strength chosen inside the training folds.
 
 ### How we test the difference
-Cross-validation is grouped by compound (5 folds, repeated 3 times), so no compound appears in both training and test data. We compare pooled out-of-fold AUROC with a compound bootstrap. When we shuffled the labels, the raw bootstrap p-values were too optimistic, so we calibrate them against that shuffled-label null before applying Benjamini–Hochberg over the powered endpoints. Brier score, calibration error and calibration slope are reported per endpoint.
+Cross-validation is grouped by compound (5 folds, repeated 3 times), so no compound appears in both training and test data. We compare pooled out-of-fold AUROC with a compound bootstrap. When we shuffled the labels, the raw bootstrap p-values were too optimistic, so we calibrate them against that shuffled-label null before applying Benjamini–Hochberg over the powered endpoints. Benjamini–Hochberg is valid under positive dependence, which fits endpoints that share compounds; the effective number of independent tests is smaller than the count, so the correction is conservative. Brier score, calibration error and calibration slope are reported per endpoint, and each endpoint also shows the smallest advantage its data could detect.
 
 ### Reading the labels
 A ToxCast 0 means *not a (filtered) hit*: a true non-hit, a hit removed by the cytotoxicity filter, or a tie. It never means "tested negative". Untested pairs are missing, not 0. For the cytotoxicity columns, 1 means cytotoxic in that cell type or tissue. The cytotoxicity filter applies to only about 35% of cell-based records.
+
+### How to read "no detectable advantage"
+It means the data showed no advantage that survives correction. It is absence of evidence, not proof of equivalence, and it is only as informative as the smallest advantage the endpoint could detect, which is listed for every endpoint.
 
 ### What we do not claim
 This is a 2D plate assay, not an organ-on-chip, at a single 44-hour time point, and donor variability is not modelled. The count of certified endpoints depends on how wide the shuffled-label null is, so treat it as a range. The audit itself is dataset-agnostic and can be re-run on any phenotypic-profiling toxicology dataset that has a cell-count-like baseline.
