@@ -105,6 +105,7 @@ Compared with a standard "morphology versus the single cell-count number" benchm
 - **Robustness checks.** Aggregation rules, chemical-similarity folds, a plate/well/batch probe, and a simulation with known ground truth all support the same conclusions.
 - **Compound-level explanation.** A ranking-benefit decomposition shows which compounds gain from morphology, plus enrichment by assay and target family.
 - **Organ-on-chip planning.** A simulation at 20 to 200 compounds shows what the audit concludes at chip scale, why folds are grouped by compound when compounds are replicated over chips, and how many compounds a design needs to detect a given advantage; the demo's Organ-on-chip tab turns this into a study planner and a checklist for labels, a 3D cell-count baseline, features, grouping and sample size.
+- **A second morphology source.** EU-OPENSCREEN HepG2 profiles (four imaging sites) run through the same audit on 327 shared compounds agree on MT and show how much a verdict count depends on baseline strength and sample size.
 - **Calibrated probabilities and an interactive demo.** Per-endpoint reliability diagrams, recalibrated compound predictions, and a plate-map view of all 405 endpoints.
 
 Next steps: apply the audit to organ-on-chip datasets, add donor and time-point dimensions as data becomes available, and add a density-residualised comparator for an even sharper separation of morphology from cell count.
