@@ -1,0 +1,23 @@
+{
+  "n_compounds": 327,
+  "n_endpoints": 49,
+  "n_features_hepg2": 2797,
+  "n_features_oasis": 984,
+  "null_sd_hepg2": 1.2539983281091585,
+  "null_sd_oasis": 1.4290528217475904,
+  "null_runs_hepg2": 300,
+  "null_runs_oasis": 300,
+  "certified_hepg2": 16,
+  "certified_oasis": 1,
+  "certified_both": 1,
+  "raw_wins_hepg2": 22,
+  "raw_wins_oasis": 7,
+  "median_full_AUROC_hepg2": 0.7117564839260755,
+  "median_full_AUROC_oasis": 0.678082191780822,
+  "median_baseline_AUROC_hepg2": 0.5730936819172113,
+  "median_baseline_AUROC_oasis": 0.6070660522273426,
+  "median_delta_hepg2": 0.14057239057239057,
+  "median_delta_oasis": 0.05201777119585338,
+  "spearman_full_AUROC": 0.49477014133374153,
+  "spearman_delta": 0.1305678861166386
+}
