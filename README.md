@@ -1,95 +1,85 @@
 # beyond-the-count
 
-**Does Cell Painting see more than cell count?** A statistically controlled *shortcut audit* for image-based toxicology profiling (Python package `cpsa`).
+**Does Cell Painting see more than a cell count?** A statistical audit that tells toxicology teams where image-based morphology profiles add real information beyond a simple cell-count baseline.
 
 **Live demo:** https://beyond-the-count1.streamlit.app/
 
-## Cell Painting Shortcut Audit
+## Problem
 
-A statistically rigorous audit of whether Cell Painting morphological profiles actually beat a **cell-count-only baseline**
-for predicting toxicology endpoints in primary human hepatocytes — with Benjamini–Hochberg FDR control across hundreds of
-endpoints, explicit *indeterminate* verdicts for under-powered endpoints, calibration checks, and an assay/target-family
-enrichment analysis of where morphology's advantage lives.
+Cell Painting stains cells with six fluorescent dyes, images them in five channels, and measures thousands of shape, texture and intensity features per cell. It is becoming a core method for human-relevant, animal-free toxicology, and regulators now ask for clear technical characterisation of such assays.
 
-*AI for Life Science Challenge — category: **Model & Algorithm**.*
+Many toxicity labels are linked to how many cells survive a treatment. A model that knows cell counts alone can therefore score well on those labels, which makes it hard to tell whether a morphology model is reading morphology or reading density. Teams need a repeatable way to answer, endpoint by endpoint: **what does the full morphology profile add beyond cell count?**
 
-Source data: Ewald et al. (2026) *Cell Systems* 17(5):101566 — profiles on Zenodo
-[10.5281/zenodo.17067683](https://zenodo.org/records/17067683) (CC-BY 4.0), labels/annotations from the authors'
-[analysis repo](https://github.com/jessica-ewald/2024_09_09_Axiom_OASIS) (BSD-3-Clause).
+## Solution
 
-> Repository layout: `src/cpsa/` package · `scripts/` numbered pipeline stages · `tests/` · `demo/` Streamlit app · `docs/` (problem statement, plan) · `report/` (technical report, write-up, video script) · `results/` generated outputs.
+`cpsa` (Cell Painting Shortcut Audit) is a reusable, dataset-agnostic audit. For every assay endpoint it compares three models on identical compound-grouped folds and returns one of four verdicts:
 
-## Quick start (CPU only, ~1 GB download, laptop-scale)
+| verdict | meaning |
+|---|---|
+| `morphology_advantage` | the full profile beats the cell-count baseline, certified after multiple-testing correction |
+| `no_advantage` | the cell-count baseline does as well, given enough data to compare |
+| `indeterminate` | the endpoint needs more positive compounds before a claim is possible |
+| `positive_control` | the cell-count endpoint itself, which the cell-count model solves by construction |
+
+Applied to the public primary human hepatocyte data of Ewald et al. (*Cell Systems* 2026; 1,085 compounds, 405 endpoints from ToxCast/Tox21 plus the study's own readouts), the audit certifies 15 endpoints for morphology among the 181 that have enough data, including the metabolic-activity readout (MT) in all three image representations. Morphology adds the most information for compounds that alter cells while leaving them in place (+0.15 ranking benefit).
+
+Everything runs on a laptop CPU with fixed seeds and MD5-verified downloads. Data: profiles on Zenodo ([10.5281/zenodo.17067683](https://zenodo.org/records/17067683), CC-BY 4.0) and labels from the authors' [analysis repo](https://github.com/jessica-ewald/2024_09_09_Axiom_OASIS) (BSD-3-Clause).
+
+**Try it**
 
 ```bash
 python3.12 -m venv .venv && .venv/bin/pip install -r requirements.txt && .venv/bin/pip install -e .
-# NB: call .venv/bin/python directly; `source .venv/bin/activate` also works unless your path contains a ':'
-
-.venv/bin/python scripts/01_download_zenodo_data.py            # profiles + metadata (MD5-verified). add --only cpcnn metadata for a quick start
-.venv/bin/python scripts/02_fetch_labels.py                    # clones the authors' repo (labels, endpoint annotations, SI tables)
-
-# the audit: raw run -> label-permutation null -> null-calibrated verdicts -> enrichment
-.venv/bin/python scripts/03_run_audit.py --feature-set cellprofiler --agg allpod     # -> results/cellprofiler_allpod/audit_table.csv (~30 min on 10 cores)
-.venv/bin/python scripts/08_null_control.py --feature-set cellprofiler --agg allpod --n-endpoints 100 --n-perms 2   # -> null_control.csv (repeat with --seed 1 --append)
-.venv/bin/python scripts/15_calibrate_verdicts.py --config cellprofiler_allpod        # primary verdicts / q-values use calibrated p-values
-.venv/bin/python scripts/04_run_enrichment.py --config cellprofiler_allpod            # -> results/<config>/enrichment.csv
-
-.venv/bin/python scripts/07_finalize_results.py --primary cellprofiler_allpod         # headline results/ + figures/ + calibrated OOF probabilities
-.venv/bin/python scripts/05_build_demo_assets.py                                      # small tables the demo reads
-.venv/bin/streamlit run demo/app.py                                                   # interactive demo over precomputed results
-.venv/bin/python -m pytest                                                            # 30 unit tests
+.venv/bin/streamlit run demo/app.py        # precomputed results are included in results/
 ```
 
-All precomputed results needed by the demo are committed under `results/`, so the demo runs without any download or re-computation. `requirements-lock.txt` lists the exact versions used; optional extras for scripts 14/16: `pip install markdown tifffile pillow imagecodecs`.
+To rebuild the results from the raw data, run the numbered scripts in `scripts/` in order (`01_download_zenodo_data.py` to `15_calibrate_verdicts.py`), or `scripts/20_full_audit.sh` for the full three-representation audit.
 
-Additional analyses (optional, all reproducible): `06_compare_to_paper.py` (agreement with the source paper's metrics), `09_technical_probe.py`
-(plate/well/batch-only probe), `10_feature_families.py` (CellProfiler feature-family attribution), `11_paper_faithful_cv.py` (re-run under the paper's
-own CV protocol), `12_headline_numbers.py` (every number in the report), `13_sensitivity_postprocess.py` (power threshold / alpha / chance-floored
-baseline), `14_fetch_example_images.py` (a dozen demo images, individually fetched from the Cell Painting Gallery), `16_build_report_pdf.py`
-(report PDF via headless Chrome), `17_simulation_validation.py` (audit validated on synthetic data with known truth), `19_filter_stratified.py` (re-score results by whether the cytotoxicity filter could apply), `20_full_audit.sh` (the full three-representation audit with matched nulls and all downstream tables), `21_robustness.sh` (aggregation rules and chemical-similarity folds), `run_all_configs.sh` (older multi-configuration driver).
+## Architecture
 
-`03_run_audit.py` options: `--feature-set {cellprofiler,cpcnn,dino}`, `--agg {all,allpod,allpodcc}`, `--categories`, `--endpoints`
-(pilot runs), `--powered-only`, `--n-repeats`, `--n-boot`, `--n-jobs`, `--seed`.
+```
+Zenodo profiles ──► normalise per plate (DMSO-MAD) ──► filter correlated features ──► aggregate per compound
+                                                                                         │
+ToxCast / Tox21 labels ─► label semantics (untested = missing, cytotoxicity filter) ─────┤
+                                                                                         ▼
+                              three XGBoost models on identical compound-grouped folds (5-fold × 3 repeats)
+                              • full morphology profile
+                              • cell count, single number (the paper's baseline)
+                              • cell count, dose–response curve (stronger baseline)
+                                                                                         │
+                          paired compound bootstrap of ΔAUROC ──► label-permutation null ─┤
+                                                                                         ▼
+                       power check (≥15 positives and ≥15 non-hits) ──► Benjamini–Hochberg FDR ──► verdicts
+                                                                                         │
+                      calibration · enrichment by assay family · compound-level benefit ─┴─► Streamlit demo
+```
 
-## What it does
-
-For every endpoint (292 cell-based + 72 cell-free + 38 cytotoxicity ToxCast/Tox21 endpoints, plus the paper's native MT / LDH hits):
-
-| step | module |
+| stage | module |
 |---|---|
-| per-plate DMSO-MAD normalisation, correlation filter, per-compound aggregation (`all` / `allpod` / `allpodcc`) | `cpsa.data.preprocess` |
-| three XGBoost models with identical folds: **full** morphology profile, **scalar_cc** (paper's mean cell count), **strong_cc** (cell-count dose–response curve, min, AUC, cell-count POD — still *only* cell-count information) | `cpsa.models` |
-| repeated stratified grouped CV (out-of-fold probabilities), paired compound-bootstrap of ΔAUROC = full − baseline | `cpsa.models.train_eval` |
-| label-permutation null → empirical-null calibration of the bootstrap p-values (raw bootstrap p is anti-conservative) | `cpsa.audit.null_control`, `cpsa.stats.null_calibration` |
-| power check (≥15 actives and ≥15 non-hits, else **indeterminate**), BH-FDR over powered endpoints | `cpsa.stats` |
-| calibration of the full model (Brier, Brier skill, ECE, calibration slope, reliability bins) | `cpsa.stats.calibration` |
-| Fisher-exact enrichment of "morphology advantage" endpoints by target family / assay design / cell type | `cpsa.biology.enrichment` |
+| normalisation, feature filtering, per-compound aggregation (`all` / `allpod` / `allpodcc`) | `cpsa.data.preprocess` |
+| label loading and semantics | `cpsa.data.load_labels`, `cpsa.data.label_context` |
+| the three models, grouped cross-validation, bootstrap of ΔAUROC | `cpsa.models` |
+| permutation null and calibrated p-values | `cpsa.audit`, `cpsa.stats.null_calibration` |
+| power check, BH-FDR, verdict assignment | `cpsa.stats.multiple_testing` |
+| calibration of predicted probabilities (Brier, ECE, slope) | `cpsa.stats.calibration` |
+| enrichment by target family, assay design, cell type | `cpsa.biology.enrichment` |
+| compound-level benefit and compound classes | `cpsa.biology.compound_classes` |
+| simulation with known ground truth | `cpsa.simulate` |
+| public API | `cpsa.api` (`shortcut_audit`, `permutation_null`) |
 
-Verdicts (BH on null-calibrated p-values; raw-bootstrap verdicts kept as `verdict_uncalibrated`): `morphology_advantage` (powered, Δ>0, FDR q<0.05) · `no_advantage` (powered, otherwise) · `indeterminate` (under-powered) ·
-`positive_control` (the `cell_count` native endpoint — its label is *defined* from cell count; the strong baseline must score ≈1.0).
+Repository layout: `src/cpsa/` package, `scripts/` numbered pipeline stages, `tests/` unit tests, `demo/` Streamlit app, `docs/` problem statement and plan, `report/` technical report and write-up, `results/` generated outputs.
 
-## Inputs / outputs
+## Improvements
 
-* Input: `data/raw/*.parquet` (Zenodo), `data/external/ewald_repo/` (labels). Both git-ignored.
-* Output per configuration `results/<feature_set>_<agg>/`: `audit_table.csv` (one row per endpoint), `oof_predictions.parquet`, `enrichment.csv`.
-* `audit_table.csv` columns: endpoint annotations · `n_compounds, n_active, n_inactive` · `scalar_cc_AUROC/PRAUC`, `strong_cc_AUROC/PRAUC`,
-  `full_AUROC/PRAUC` · `delta_AUROC` (full − strong_cc), CI, `delta_z`, `bootstrap_p` (raw), `calibrated_p`, `fdr_q`, `verdict`, `verdict_uncalibrated` (+ `_scalar` variants vs the paper's scalar baseline) ·
-  `calibration_brier, brier_skill, ece, calib_slope, brier_recalibrated`.
+Compared with a standard "morphology versus the single cell-count number" benchmark, the audit adds:
 
-## Compute
+- **A stronger comparator.** The cell-count baseline sees the whole dose–response curve (eight concentrations, minimum, area under the curve, cell-count POD), so any advantage reflects information beyond cell count.
+- **Calibrated statistics.** Bootstrap p-values are calibrated against an empirical label-permutation null run at the audit's own settings, so the certified count matches its nominal significance level (2.6% at a nominal 5% on held-out runs).
+- **Power-aware verdicts.** Endpoints with at least 15 positives and 15 non-hits get a verdict, and the rest are marked `indeterminate`, so every reported number is backed by enough data.
+- **Multiple-testing control.** Benjamini–Hochberg FDR across all powered endpoints.
+- **Label-aware data handling.** Untested compound–endpoint pairs stay missing, and the cytotoxicity filter is respected where it applies.
+- **Three image representations.** CellProfiler, CP-CNN and DINOv2, each with its own matched null; 8 endpoints are certified under all three.
+- **Robustness checks.** Aggregation rules, chemical-similarity folds, a plate/well/batch probe, and a simulation with known ground truth all support the same conclusions.
+- **Compound-level explanation.** A ranking-benefit decomposition shows which compounds gain from morphology, plus enrichment by assay and target family.
+- **Calibrated probabilities and an interactive demo.** Per-endpoint reliability diagrams, recalibrated compound predictions, and a plate-map view of all 405 endpoints.
 
-Everything runs on CPU. ~1000 compounds × a few hundred to ~5,000 features; one full audit (~400 endpoints × 3 models × 5 folds × 3 repeats)
-takes ~15 min (CP-CNN) to ~30 min (CellProfiler) on a 10-core laptop; 200 permutation runs 10–25 min. No GPU, no paid services.
-
-## Headline results (CellProfiler, `allpod`; details in `report/technical_report.pdf`)
-
-404 endpoints → 181 powered (55 % indeterminate) → 64 'wins' under a plain bootstrap → **15 certified** after null calibration for CellProfiler (a band of 5–67 depending on the null sd; 15 for CP-CNN, 54 for DINOv2; 8 certified under all three; MT certified in all three representations, LDH never; cell-free 0 of 8; cytotoxicity enrichment is confounded with endpoint size and reported as descriptive). Permuted-label control at the audit's own settings: raw false-positive rate 10 % at nominal 5 %, calibrated 2.6 % on held-out runs.
-
-## Reading the labels correctly
-
-A ToxCast `0` means **not a (filtered) hit**, never "tested negative"; untested pairs are missing and are never zero-filled; for the 38 cytotoxicity columns `1` = cytotoxic in that cell type/tissue; the cytotoxicity filter that turns some hits into 0 applies only to ~35 % of cell-based records. Labels come only from the repo's `*_binary.parquet` files. Details: `docs/PROBLEM_STATEMENT.md` §3.3b; `scripts/19_filter_stratified.py` re-scores results by whether the filter could apply.
-
-## Scope & limitations
-
-2D hepatocyte plate assay (not organ-on-chip); precomputed profiles only; single 44 h time point; donor variability not modeled;
-compound-level aggregation (so plate/well technical covariates are undefined and not used). See the technical report.
+Next steps: apply the audit to organ-on-chip datasets, add donor and time-point dimensions as data becomes available, and add a density-residualised comparator for an even sharper separation of morphology from cell count.
