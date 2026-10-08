@@ -309,6 +309,9 @@ Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 19 / **15*
 - **What the data could detect.** The median minimum detectable effect (80 % power) over the 181 powered endpoints is 0.25 AUROC; 18 endpoints could detect 0.10, 36 could detect 0.15. "No detectable advantage" is absence of evidence, not equivalence, and each endpoint carries its detectable effect.
 - **Assay-level enrichment.** Treating whole assays as the exchangeable unit moves the CellProfiler cytotoxicity enrichment from Fisher p = 0.001 to p = 0.12 (DINOv2: 1 × 10⁻⁵ to 0.039), supporting the descriptive reading.
 
+### 7.11 At organ-on-chip scale (simulation)
+Simulated data with known truth at 20 to 200 compounds (720 endpoints per size, own permutation null per size): calibration keeps false credit near zero at every size, but power is low for chip-sized studies (1 % at 20 compounds, 11 % at 40, 33 % at 100, 83 % at 200) and the smallest detectable AUROC advantage falls from 0.72 at 20 compounds to 0.19 at 200. When compounds are replicated over chips, cross-validation that treats each chip as independent turns random labels into an AUROC of 0.85, against 0.51 when grouped by compound. The demo's Organ-on-chip tab turns this into a study planner (fitted on the 391 real plate endpoints) and a checklist of what changes for a chip: labels, a 3D cell-count baseline, features, grouping, sample size. No chip data is involved and none is claimed.
+
 ---
 
 ## 8. Scope, assumptions and threats to validity
