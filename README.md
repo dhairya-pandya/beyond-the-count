@@ -2,6 +2,8 @@
 
 **Does Cell Painting see more than cell count?** A statistically controlled *shortcut audit* for image-based toxicology profiling (Python package `cpsa`).
 
+**Live demo:** https://beyond-the-count1.streamlit.app/
+
 ## Cell Painting Shortcut Audit
 
 A statistically rigorous audit of whether Cell Painting morphological profiles actually beat a **cell-count-only baseline**
