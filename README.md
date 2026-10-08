@@ -17,7 +17,7 @@ Many toxicity labels are linked to how many cells survive a treatment. A model t
 | verdict | meaning |
 |---|---|
 | `morphology_advantage` | the full profile beats the cell-count baseline, certified after multiple-testing correction |
-| `no_advantage` | the cell-count baseline does as well, given enough data to compare |
+| `no_advantage` | no detectable advantage: with enough data to compare, the cell-count baseline does as well |
 | `indeterminate` | the endpoint needs more positive compounds before a claim is possible |
 | `positive_control` | the cell-count endpoint itself, which the cell-count model solves by construction |
 
@@ -96,8 +96,11 @@ Compared with a standard "morphology versus the single cell-count number" benchm
 - **A stronger comparator.** The cell-count baseline sees the whole dose–response curve (eight concentrations, minimum, area under the curve, cell-count POD), so any advantage reflects information beyond cell count.
 - **Calibrated statistics.** Bootstrap p-values are calibrated against an empirical label-permutation null run at the audit's own settings, so the certified count matches its nominal significance level (2.6% at a nominal 5% on held-out runs).
 - **Power-aware verdicts.** Endpoints with at least 15 positives and 15 non-hits get a verdict, and the rest are marked `indeterminate`, so every reported number is backed by enough data.
-- **Multiple-testing control.** Benjamini–Hochberg FDR across all powered endpoints.
+- **Multiple-testing control.** Benjamini–Hochberg FDR across all powered endpoints, valid under the positive dependence that endpoints sharing compounds and assays display.
 - **Label-aware data handling.** Untested compound–endpoint pairs stay missing, and the cytotoxicity filter is respected where it applies.
+- **A nested test of added value.** A model that sees morphology and the cell-count curve is compared with cell count alone, with its own permutation null; it certifies 23 endpoints, including all 15 from the main audit. A regularised logistic regression confirms the signal holds for a linear model as well.
+- **Detectable-effect reporting.** Every endpoint shows the smallest AUROC advantage its data can detect, and "no detectable advantage" is read alongside it.
+- **Assay-aware enrichment.** Enrichment p-values come both as a Fisher test and as a permutation over whole assays, so correlated endpoints from one assay count once.
 - **Three image representations.** CellProfiler, CP-CNN and DINOv2, each with its own matched null; 8 endpoints are certified under all three.
 - **Robustness checks.** Aggregation rules, chemical-similarity folds, a plate/well/batch probe, and a simulation with known ground truth all support the same conclusions.
 - **Compound-level explanation.** A ranking-benefit decomposition shows which compounds gain from morphology, plus enrichment by assay and target family.
