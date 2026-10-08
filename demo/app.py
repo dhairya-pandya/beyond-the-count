@@ -618,7 +618,11 @@ with tab_cells:
             fig.update_xaxes(title="primary hepatocytes")
             fig.update_yaxes(title="HepG2")
             st.plotly_chart(fig, width="stretch", theme=None, config={"displayModeBar": False})
-        st.caption("Exploratory: HepG2 has a single concentration, so only the single-number cell-count baseline exists, and the labels come from the primary-hepatocyte study.")
+        st.write(f"MT is certified in both systems and LDH in neither. HepG2 certifies more endpoints, mostly cytotoxicity summaries and reporter assays, but the "
+                 f"comparison is not like for like: the HepG2 cell count is one 10 µM measurement from other cells, a much weaker baseline (median AUROC "
+                 f"{es['median_baseline_AUROC_hepg2']:.2f} against {es['median_baseline_AUROC_oasis']:.2f}; for MT 0.58 against 0.81), and 327 compounds give far less power "
+                 "than the 967 of the main audit. This is the weak-baseline effect of the report again: a verdict count depends on how strong the baseline is.")
+        st.caption("Exploratory. HepG2 has a single concentration, so only the single-number cell-count baseline exists, and the labels come from the primary-hepatocyte study.")
 
 # ------------------------------------------------------------------ organ-on-chip
 with tab_chip:
