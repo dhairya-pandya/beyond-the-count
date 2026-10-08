@@ -1,0 +1,35 @@
+{
+  "config": "cellprofiler_allpod",
+  "null_sd_used": 1.3744575698090657,
+  "n_powered": 181,
+  "median_mde_powered": 0.2506162030169934,
+  "median_mde_underpowered": 0.4562557040574262,
+  "mde<=0.05": {
+    "powered_and_precise": 2,
+    "powered_but_wider": 179,
+    "underpowered_but_precise": 0,
+    "certified_precise": 1,
+    "no_advantage_that_rule_out_larger_effects": 1
+  },
+  "mde<=0.1": {
+    "powered_and_precise": 18,
+    "powered_but_wider": 163,
+    "underpowered_but_precise": 0,
+    "certified_precise": 8,
+    "no_advantage_that_rule_out_larger_effects": 10
+  },
+  "mde<=0.15": {
+    "powered_and_precise": 36,
+    "powered_but_wider": 145,
+    "underpowered_but_precise": 2,
+    "certified_precise": 10,
+    "no_advantage_that_rule_out_larger_effects": 26
+  },
+  "mde<=0.2": {
+    "powered_and_precise": 54,
+    "powered_but_wider": 127,
+    "underpowered_but_precise": 3,
+    "certified_precise": 13,
+    "no_advantage_that_rule_out_larger_effects": 41
+  }
+}
