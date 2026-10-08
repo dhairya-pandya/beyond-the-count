@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 
 COLORS = {"morphology_advantage": "#1b9e77", "no_advantage": "#7f7f7f", "indeterminate": "#e6ab02", "positive_control": "#d95f02"}
-LABELS = {"morphology_advantage": "morphology advantage", "no_advantage": "no advantage", "indeterminate": "indeterminate", "positive_control": "positive control"}
+LABELS = {"morphology_advantage": "morphology advantage", "no_advantage": "no detectable advantage", "indeterminate": "indeterminate", "positive_control": "positive control"}
 
 
 def _save(fig, path: Path | None):

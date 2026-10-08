@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Promote one configuration to the headline results, summarise sensitivity across configurations, draw report figures.
 
-Writes results/{audit_table.csv, oof_predictions.parquet, enrichment.csv}, results/sensitivity_summary.csv and results/figures/*.png
+Writes results/{audit_table.csv, oof_predictions.parquet, enrichment.csv, nested_table.csv, detectable_effect.csv}, results/sensitivity_summary.csv and results/figures/*.png
 """
 import argparse
 import shutil
@@ -38,7 +38,7 @@ def main() -> None:
     ap.add_argument("--primary", default="cellprofiler_allpod")
     a = ap.parse_args()
     src = RESULTS / a.primary
-    for f in ("audit_table.csv", "oof_predictions.parquet", "enrichment.csv"):
+    for f in ("audit_table.csv", "oof_predictions.parquet", "enrichment.csv", "nested_table.csv", "detectable_effect.csv"):
         if (src / f).exists():
             shutil.copy(src / f, RESULTS / f)
     audit = pd.read_csv(RESULTS / "audit_table.csv")
