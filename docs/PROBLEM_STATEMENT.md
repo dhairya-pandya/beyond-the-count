@@ -312,6 +312,9 @@ Certified endpoints at minimum 10 / 15 / 20 / 30 positives per class: 19 / **15*
 ### 7.11 At organ-on-chip scale (simulation)
 Simulated data with known truth at 20 to 200 compounds (720 endpoints per size, own permutation null per size): calibration keeps false credit near zero at every size, but power is low for chip-sized studies (1 % at 20 compounds, 11 % at 40, 33 % at 100, 83 % at 200) and the smallest detectable AUROC advantage falls from 0.72 at 20 compounds to 0.19 at 200. When compounds are replicated over chips, cross-validation that treats each chip as independent turns random labels into an AUROC of 0.85, against 0.51 when grouped by compound. The demo's Organ-on-chip tab turns this into a study planner (fitted on the 391 real plate endpoints) and a checklist of what changes for a chip: labels, a 3D cell-count baseline, features, grouping, sample size. No chip data is involved and none is claimed.
 
+### 7.12 A second morphology source: EU-OPENSCREEN HepG2 (exploratory)
+On the 327 compounds shared with the EU-OPENSCREEN collection (HepG2, four imaging sites, 10 µM) and 49 endpoints with enough data, the same labels and the single-number cell-count baseline give **16 certified endpoints with HepG2 profiles against 1 (MT) with primary-hepatocyte profiles** (raw bootstrap: 22 and 7; each with its own permutation null). MT is certified and LDH is not in both. The gap mostly reflects a weaker HepG2 baseline (one 10 µM count from other cells; median AUROC 0.57 against 0.61, and 0.58 against 0.81 for MT) and lower power at 327 compounds, not extra morphology, so it is reported as an exploratory second source, not as a replication. Ten of the sixteen are also certified in the main audit.
+
 ---
 
 ## 8. Scope, assumptions and threats to validity
