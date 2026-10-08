@@ -35,3 +35,23 @@ def test_null_when_advantage_is_random_across_families():
 def test_small_groups_are_skipped():
     t = enrichment_table(_audit(n_x=3, adv_x=3), by=["assay_target_family"], min_group_size=5)
     assert "X" not in set(t.group)
+
+
+def test_cluster_permutation_is_more_cautious_when_one_assay_drives_the_group():
+    from cpsa.biology.enrichment import assay_cluster
+    rows = []
+    for i in range(12):  # family X: all endpoints from ONE assay cluster, all advantage
+        rows.append(dict(endpoint_id=f"AX_one_{i}", assay_target_family="X", verdict="morphology_advantage"))
+    for j in range(20):  # family Y: 20 separate assays, 3 advantage
+        rows.append(dict(endpoint_id=f"AY_{j}_a", assay_target_family="Y", verdict="morphology_advantage" if j < 3 else "no_advantage"))
+    a = pd.DataFrame(rows)
+    a["cluster"] = assay_cluster(a["endpoint_id"])
+    t = enrichment_table(a, by=["assay_target_family"], min_group_size=5, cluster_col="cluster", n_perm=3000)
+    x = t[t.group == "X"].iloc[0]
+    assert x.p < 0.001 and 0.02 < x.p_cluster < 0.15  # naive test counts 12 independent endpoints; one assay among ~21 can reach p of about 1/21 at best
+
+
+def test_assay_cluster_takes_first_two_tokens():
+    from cpsa.biology.enrichment import assay_cluster
+    s = assay_cluster(pd.Series(["BSK_SAg_Eselectin", "TOX21_ERa_BLA_Agonist_ratio", "MT"]))
+    assert s.tolist() == ["BSK_SAg", "TOX21_ERa", "MT"]
