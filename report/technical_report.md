@@ -1,10 +1,10 @@
 # Cell Painting Shortcut Audit: does morphology beat a cell-count baseline, once we correct for testing hundreds of endpoints?
 
 **Competition:** AI for Life Science Challenge (5th Pazhou Algorithm Competition) · **Category:** Model & Algorithm
-**Team:** <<TEAM COMPOSITION — declare members and disciplines (cross-disciplinary bonus)>>
+**Team:** Vrushti (biology and data lead: labels, dataset QA, biological interpretation) and Dhairya (ML and statistics lead: models, calibration, multiple testing, demo), a biology × machine learning pairing
 **Code:** https://github.com/dhairya-pandya/beyond-the-count · **Demo:** https://beyond-the-count1.streamlit.app/ · **Video:** <<VIDEO URL>>
 
-> All numbers are regenerated from `results/` (see §7). Placeholders in `<<…>>` (team, URLs) are for the team to fill before submission.
+> All numbers are regenerated from `results/` (see §7). The video link in `<<…>>` is filled in once the video is published.
 
 ---
 
