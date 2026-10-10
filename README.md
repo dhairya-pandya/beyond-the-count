@@ -4,6 +4,8 @@
 
 **Live demo:** https://beyond-the-count1.streamlit.app/
 
+[![Keep demo awake](https://github.com/dhairya-pandya/beyond-the-count/actions/workflows/keep-alive.yml/badge.svg)](https://github.com/dhairya-pandya/beyond-the-count/actions/workflows/keep-alive.yml)
+
 ## Problem
 
 Cell Painting stains cells with six fluorescent dyes, images them in five channels, and measures thousands of shape, texture and intensity features per cell. It is becoming a core method for human-relevant, animal-free toxicology, and regulators now ask for clear technical characterisation of such assays.
