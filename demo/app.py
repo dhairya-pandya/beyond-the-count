@@ -141,18 +141,24 @@ def load_optional(name: str):
 
 
 @st.cache_data(ttl=900, show_spinner=False)
-def keepalive_status():
-    """Latest completed run of the keep-alive workflow, from the public GitHub API (None if unreachable or rate-limited)."""
+def _keepalive_run():
+    """Latest completed run of the keep-alive workflow from the public GitHub API. Raises on failure, so failures are never cached."""
     import json
     import urllib.request
-    from datetime import datetime, timezone
     url = f"https://api.github.com/repos/{REPO_URL.removeprefix('https://github.com/')}/actions/workflows/keep-alive.yml/runs?per_page=1&status=completed"
+    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "beyond-the-count-demo"})
+    with urllib.request.urlopen(req, timeout=3) as r:
+        run = json.load(r)["workflow_runs"][0]
+    return run["conclusion"], run["updated_at"]
+
+
+def keepalive_status():
+    """(conclusion, whole hours since the last keep-alive run) or None when GitHub cannot be reached."""
+    from datetime import datetime, timezone
     try:
-        with urllib.request.urlopen(urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "beyond-the-count-demo"}), timeout=3) as r:
-            run = json.load(r)["workflow_runs"][0]
-        when = datetime.fromisoformat(run["updated_at"].replace("Z", "+00:00"))
-        hours = max(0, int((datetime.now(timezone.utc) - when).total_seconds() // 3600))
-        return run["conclusion"], hours
+        conclusion, updated = _keepalive_run()
+        when = datetime.fromisoformat(updated.replace("Z", "+00:00"))
+        return conclusion, max(0, int((datetime.now(timezone.utc) - when).total_seconds() // 3600))
     except Exception:
         return None
 
