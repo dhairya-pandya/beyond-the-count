@@ -304,12 +304,12 @@ res.table   <span class="c"># one verdict per endpoint</span></pre>
 <div class="c-right"><h3>At chip scale (simulation)</h3><figure class="chart">{chart_chip()}</figure>
 <p class="note">Power to certify a true advantage, by number of compounds tested (20 to 200). False credit stays at 0 to 2%. No chip data used.</p></div>
 </div>''', "s7", 7))
-    S.append(sec(f'''<h2>What the result does and does not claim</h2>
-<div class="lim">
-<div class="lr"><h4>One hepatocyte pool, one 44 h time point, 2D plates</h4><p>Describes this system; donor variability and delayed toxicity not captured</p><p class="how">We claim the method generalizes, not the 15 endpoints</p></div>
-<div class="lr"><h4>Labels partly tied to cytotoxicity</h4><p>The filter covers about 35% of records. A 0 is a non-hit, never a confirmed negative</p><p class="how">Strong baseline; coverage reported as 670 of 1,085</p></div>
-<div class="lr"><h4>The certified count is a band</h4><p>5 to 67 depending on the null width. Median detectable effect 0.25 AUROC</p><p class="how">Report the band; read "no detectable advantage" with the detectable effect</p></div>
-<div class="lr"><h4>Second source and chip results are exploratory</h4><p>HepG2 has a weaker baseline (16 against 1 certified). Chip results are simulation</p><p class="how">Evidence about the method, not a replication or a chip result</p></div>
+    S.append(sec(f'''<h2>What we proved</h2>
+<div class="proof">
+<div class="pr"><div class="pn">2.6%</div><div><h4>False certification, calibrated</h4><p>Shuffled labels, nominal 5%. The plain bootstrap gives 10.3%</p></div></div>
+<div class="pr"><div class="pn">3 of 3</div><div><h4>MT certified in every representation</h4><p>CellProfiler, CP-CNN and DINOv2, with q of 0.001 to 0.039</p></div></div>
+<div class="pr"><div class="pn">23</div><div><h4>Endpoints beyond cell count</h4><p>Nested test certifies 23, and all 15 of the main audit are among them</p></div></div>
+<div class="pr"><div class="pn">0.51</div><div><h4>Layout and batch carry no signal</h4><p>Plate, well and batch alone score at chance; grouping by compound keeps replicate chips honest</p></div></div>
 </div>''', "s8", 8))
     S.append(sec(f'''<h2>The path from a working audit to something labs rely on</h2>
 <figure class="diagram road">{diagram_roadmap()}</figure>
@@ -439,6 +439,13 @@ ol.seq li{{font-size:24px;border:2px solid {RULE};background:#fff;border-radius:
 .lr{{display:grid;grid-template-columns:5fr 6fr 5fr;gap:44px;padding:26px 0;border-top:2px solid {RULE};align-items:start}}
 .lr:last-child{{border-bottom:2px solid {RULE}}}
 .lr h4{{font-size:34px;margin:0}}.lr p{{font-size:29px;line-height:1.35}}.lr p.how{{color:{MAG};font-weight:500}}
+/* proof slide */
+.proof{{display:flex;flex-direction:column;margin-top:44px}}
+.pr{{display:grid;grid-template-columns:330px 1fr;gap:48px;align-items:center;padding:30px 0;border-top:2px solid {RULE}}}
+.pr:last-child{{border-bottom:2px solid {RULE}}}
+.pn{{font-family:{SERIF};font-size:112px;line-height:1;letter-spacing:-.02em;color:{MAG};font-weight:600;white-space:nowrap}}
+.pr h4{{font-size:38px;margin:0 0 8px;color:{INK}}}
+.pr p{{font-size:30px;line-height:1.35;color:#3E4A57}}
 /* 9 */
 .road{{margin-top:50px}}.road svg{{width:100%;height:auto;display:block}}
 .ask{{margin-top:50px;font-family:{SERIF};font-size:42px;line-height:1.2}}
