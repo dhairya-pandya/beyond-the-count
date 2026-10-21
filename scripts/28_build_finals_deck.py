@@ -235,7 +235,7 @@ def slides() -> list[str]:
 <div class="bignum">31<span>of</span>49</div>
 <p class="bigcap">endpoints well predicted by gene expression were predicted equally well by cell count alone</p>
 <p class="src">Seal et al., <i>Nature Communications</i>, 2026</p>
-<ul class="pts">
+<ul class="pts sm">
 <li>Cell Painting: six dyes, five channels, thousands of features per cell</li>
 <li>Many toxicity labels track cytotoxicity, so counting cells can score well</li>
 <li>Cell-count-only AUC 0.68 against 0.67 for a full-profile network</li>
@@ -383,13 +383,13 @@ ul.pts.two{{columns:1}}
 .s1-img{{position:absolute;right:0;top:0;width:960px;height:1080px}}.s1-img img{{width:100%;height:100%;object-fit:cover;display:block}}
 .s1-img .cap{{position:absolute;right:28px;bottom:26px;color:#fff;font-size:20px;opacity:.9}}
 /* 2 */
-.bignum{{font-family:{SERIF};font-size:230px;line-height:.9;letter-spacing:-.035em;color:{MAG};font-weight:500;display:flex;align-items:baseline;gap:22px}}
-.bignum span{{font-size:64px;letter-spacing:0;color:{SLATE};font-style:italic}}
+.bignum{{font-family:{SERIF};font-size:170px;line-height:.9;letter-spacing:-.035em;color:{MAG};font-weight:500;display:flex;align-items:baseline;gap:22px}}
+.bignum span{{font-size:52px;letter-spacing:0;color:{SLATE};font-style:italic}}
 .bigcap{{font-size:33px;line-height:1.25;max-width:760px;margin-top:12px;font-weight:500}}
 .c-right{{display:flex;flex-direction:column;gap:24px}}
 figure.panel{{border-radius:12px;overflow:hidden;background:#fff;border:2px solid {RULE}}}
-figure.panel img{{width:100%;height:300px;object-fit:cover;display:block}}
-.wells svg{{display:block;width:100%;height:300px}}
+figure.panel img{{width:100%;height:210px;object-fit:cover;display:block}}
+.wells svg{{display:block;width:100%;height:230px}}
 figure.panel figcaption{{padding:14px 22px 16px;font-size:24px;color:{SLATE};display:flex;flex-direction:column;gap:4px}}
 figure.panel figcaption b{{color:{INK};font-weight:600;font-size:26px}}
 /* 3 */
@@ -420,7 +420,7 @@ ul.pts.two{{margin-top:18px}}
 .browser .bar{{height:44px;background:#E8ECEF;display:flex;align-items:center;gap:9px;padding:0 18px;font-size:19px;color:{SLATE}}}
 .browser .bar i{{width:13px;height:13px;border-radius:50%;background:#C5CDD5;display:inline-block}}
 .browser .bar span{{margin-left:14px}}
-.browser img{{width:100%;display:block;height:690px;object-fit:cover;object-position:top}}
+.browser img{{width:100%;display:block;height:600px;object-fit:cover;object-position:top}}
 pre.code{{background:{INK};color:#E8ECEF;border-radius:10px;padding:26px 30px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:24px;line-height:1.55;white-space:pre-wrap}}
 pre.code .k{{color:#E58AC8}}pre.code .c{{color:#8FA0B3}}
 .walk{{margin-top:34px;font-size:21px;font-weight:600;color:{SLATE};letter-spacing:.04em}}
