@@ -78,12 +78,12 @@ def diagram_wells() -> str:
 
 
 def arrowhead() -> str:
-    return (f'<defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="8" markerHeight="8" orient="auto">'
-            f'<path d="M0 0 L10 5 L0 10 z" fill="{SLATE}"/></marker></defs>')
+    return (f'<defs><marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto" markerUnits="strokeWidth">'
+            f'<path d="M1 1 L8.5 5 L1 9" fill="none" stroke="{SLATE}" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/></marker></defs>')
 
 
 def arrow(x1, y1, x2, y2) -> str:
-    return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{SLATE}" stroke-width="2.5" marker-end="url(#ah)"/>'
+    return f'<line x1="{x1}" y1="{y1}" x2="{x2}" y2="{y2}" stroke="{SLATE}" stroke-width="1.6" marker-end="url(#ah)"/>'
 
 
 def rect(x, y, w, h, title, fill="#FFFFFF", stroke=RULE, color=INK, weight=500, size=25, sub=None) -> str:
@@ -171,7 +171,7 @@ def diagram_roadmap() -> str:
         el.append(f'<text x="{x + 32}" y="346" font-size="22" font-weight="600" fill="{colr}" font-family="{SANS}">Gate</text>')
         el.append(f'<text x="{x + 32}" y="374" font-size="22" fill="{SLATE}" font-family="{SANS}">{gate}</text>')
         if i < 2:
-            el.append(f'<line x1="{x + 546}" y1="200" x2="{x + 584}" y2="200" stroke="{SLATE}" stroke-width="3" marker-end="url(#ah)"/>')
+            el.append(f'<line x1="{x + 546}" y1="200" x2="{x + 584}" y2="200" stroke="{SLATE}" stroke-width="1.6" marker-end="url(#ah)"/>')
     return f'<svg viewBox="0 0 1720 400" role="img" aria-label="Roadmap in three phases: close the evidence gaps, put it in other hands, make it routine">{"".join(el)}</svg>'
 
 
@@ -352,24 +352,24 @@ CSS = f"""
 @import url('https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&display=swap');
 *{{box-sizing:border-box;margin:0;padding:0}}
 html,body{{background:{PAPER};width:1920px;height:1080px;overflow:hidden}}
-body{{font-family:{SANS};color:{INK};font-size:30px;line-height:1.3;-webkit-font-smoothing:antialiased}}
+body{{font-family:{SANS};color:{INK};font-size:32px;line-height:1.35;-webkit-font-smoothing:antialiased;font-weight:450}}
 .slide{{width:1920px;height:1080px;position:relative;overflow:hidden;background:{PAPER};padding:84px 112px 0}}
 h1,h2,h3,h4{{font-family:{SERIF};font-weight:500;letter-spacing:-.012em;color:{INK}}}
-h2{{font-size:64px;line-height:1.08;max-width:1640px}}
+h2{{font-size:68px;line-height:1.08;max-width:1640px;font-weight:600}}
 h3{{font-size:42px;line-height:1.1;margin-bottom:22px}}
-h4{{font-size:34px;line-height:1.15;margin-bottom:12px}}
-p{{font-size:27px;line-height:1.35}}
+h4{{font-size:36px;line-height:1.15;margin-bottom:12px;font-weight:600}}
+p{{font-size:30px;line-height:1.4}}
 .kicker{{font-size:21px;font-weight:600;color:{MAG};letter-spacing:.06em;margin-bottom:18px}}
 .kicker.light{{color:#E58AC8}}
-.foot{{position:absolute;left:112px;right:112px;bottom:38px;display:flex;justify-content:space-between;align-items:center;font-size:21px;color:{SLATE}}}
+.foot{{position:absolute;left:112px;right:112px;bottom:38px;display:flex;justify-content:space-between;align-items:center;font-size:24px;color:#3E4A57}}
 .foot .fl{{display:flex;align-items:center;gap:24px}}.foot .brand{{font-weight:600;color:{INK}}}
 .foot.dark{{color:#9FB0C2}}.foot.dark .brand{{color:#fff}}
 ul.pts{{list-style:none;margin-top:24px}}
-ul.pts li{{position:relative;padding-left:32px;margin-bottom:14px;font-size:31px;line-height:1.25}}
+ul.pts li{{position:relative;padding-left:34px;margin-bottom:16px;font-size:34px;line-height:1.3}}
 ul.pts li::before{{content:"";position:absolute;left:0;top:.5em;width:12px;height:12px;border-radius:50%;background:{MAG}}}
-ul.pts.sm li{{font-size:27px;margin-bottom:12px}}ul.pts.sm li::before{{width:10px;height:10px}}
+ul.pts.sm li{{font-size:30px;margin-bottom:14px}}ul.pts.sm li::before{{width:10px;height:10px}}
 ul.pts.two{{columns:1}}
-.note{{font-size:22px;color:{SLATE};line-height:1.3;margin-top:14px}}
+.note{{font-size:25px;color:#3E4A57;line-height:1.35;margin-top:14px}}
 .src{{font-size:22px;color:{SLATE};margin-top:8px}}
 .cols{{display:flex;gap:72px;margin-top:40px}}
 .c-left{{flex:1.2}}.c-right{{flex:1}}
@@ -433,12 +433,12 @@ ol.seq li{{font-size:24px;border:2px solid {RULE};background:#fff;border-radius:
 .rows{{display:flex;flex-direction:column}}
 .r{{display:flex;flex-direction:column;gap:4px;padding:20px 0;border-top:2px solid {RULE}}}
 .r:last-child{{border-bottom:2px solid {RULE}}}
-.r b{{font-size:33px;font-weight:600}}.r span{{font-size:25px;color:{SLATE}}}.r em{{font-style:normal;font-size:27px;color:{MAG};font-weight:500}}
+.r b{{font-size:33px;font-weight:600}}.r span{{font-size:28px;color:#3E4A57}}.r em{{font-style:normal;font-size:27px;color:{MAG};font-weight:500}}
 /* 8 */
 .lim{{display:flex;flex-direction:column;margin-top:36px}}
 .lr{{display:grid;grid-template-columns:5fr 6fr 5fr;gap:44px;padding:26px 0;border-top:2px solid {RULE};align-items:start}}
 .lr:last-child{{border-bottom:2px solid {RULE}}}
-.lr h4{{font-size:34px;margin:0}}.lr p{{font-size:26px;line-height:1.3}}.lr p.how{{color:{MAG};font-weight:500}}
+.lr h4{{font-size:34px;margin:0}}.lr p{{font-size:29px;line-height:1.35}}.lr p.how{{color:{MAG};font-weight:500}}
 /* 9 */
 .road{{margin-top:50px}}.road svg{{width:100%;height:auto;display:block}}
 .ask{{margin-top:50px;font-family:{SERIF};font-size:42px;line-height:1.2}}
