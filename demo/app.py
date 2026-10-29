@@ -140,29 +140,6 @@ def load_optional(name: str):
     return pd.read_csv(p) if p.exists() else None
 
 
-@st.cache_data(ttl=900, show_spinner=False)
-def _keepalive_run():
-    """Latest completed run of the keep-alive workflow from the public GitHub API. Raises on failure, so failures are never cached."""
-    import json
-    import urllib.request
-    url = f"https://api.github.com/repos/{REPO_URL.removeprefix('https://github.com/')}/actions/workflows/keep-alive.yml/runs?per_page=1&status=completed"
-    req = urllib.request.Request(url, headers={"Accept": "application/vnd.github+json", "User-Agent": "beyond-the-count-demo"})
-    with urllib.request.urlopen(req, timeout=3) as r:
-        run = json.load(r)["workflow_runs"][0]
-    return run["conclusion"], run["updated_at"]
-
-
-def keepalive_status():
-    """(conclusion, whole hours since the last keep-alive run) or None when GitHub cannot be reached."""
-    from datetime import datetime, timezone
-    try:
-        conclusion, updated = _keepalive_run()
-        when = datetime.fromisoformat(updated.replace("Z", "+00:00"))
-        return conclusion, max(0, int((datetime.now(timezone.utc) - when).total_seconds() // 3600))
-    except Exception:
-        return None
-
-
 # ------------------------------------------------------------------ figure helpers
 def style(fig: go.Figure, height: int, **layout) -> go.Figure:
     fig.update_layout(
@@ -750,12 +727,8 @@ This is a 2D plate assay, not an organ-on-chip, at a single 44-hour time point, 
 """
     )
 
-_ka = keepalive_status()
-_ka_text = ("Kept awake by a scheduled browser visit every six hours"
-            + (f" (last visit {'succeeded' if _ka[0] == 'success' else 'ran'} {'under an hour' if _ka[1] < 1 else str(_ka[1]) + ' h'} ago)" if _ka else "")
-            + f": <a href='{REPO_URL}/actions/workflows/keep-alive.yml'>workflow runs</a>.")
 st.markdown(
-    f"<div class='footer'>{_ka_text}<br>Code, report and reproduction steps: <a href='{REPO_URL}'>{REPO_URL.removeprefix('https://')}</a>. "
+    f"<div class='footer'>Code, report and reproduction steps: <a href='{REPO_URL}'>{REPO_URL.removeprefix('https://')}</a>. "
     "Source data: Ewald et al., Cell Systems 2026 (Zenodo, CC-BY 4.0).</div>",
     unsafe_allow_html=True,
 )
